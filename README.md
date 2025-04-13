@@ -1,6 +1,7 @@
 # Show, Attend and Tell: Neural Image Caption Generation with Visual Attention
 
 ### CS 4782 Final Project
+### Sunny Sun, Michael Wei, Tony Chen, Linda Hu, Jiye Baek
 
 ## Overview
 This project implements a neural image caption generation model that employs a visual attention mechanism to dynamically focus on different parts of an image while generating descriptive captions. The approach follows the paper, "Show, Attend and Tell: Neural Image Caption Generation with Visual Attention" by Xu et al.
