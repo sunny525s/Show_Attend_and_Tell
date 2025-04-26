@@ -9,8 +9,9 @@ This project implements a neural image caption generation model that employs a v
 ## Dataset Preparation
 
 ### 1. Download Flickr8k Annotations
-- Download the dataset JSON file from [Stanford's webpage](https://cs.stanford.edu/people/karpathy/deepimagesent/).
-- Place the downloaded JSON file in the directory:
+- Download the image dataset file from [Flickr8K](https://github.com/jbrownlee/Datasets/releases/download/Flickr8k/Flickr8k_Dataset.zip).
+- Download the caption dataset file from [Flickr8K] (http://cs.stanford.edu/people/karpathy/deepimagesent/caption_datasets.zip)
+- Place the downloaded file in the directory:
   ```
   data/flickr8k
   ```
@@ -18,14 +19,10 @@ This project implements a neural image caption generation model that employs a v
 ### 2. Preprocess the Data
 - Run the following command to generate the training and validation splits:
   ```bash
-  python data_preprocessing.py
+  python data_prep.py
   ```
-
-### 3. Download Flickr8k Images
-- Get the Flickr8k images from [Kaggle](https://www.kaggle.com/datasets/adityajn105/flickr8k?resource=download).
-- Extract the images and place them in the directory:
-  ```
-  data/flickr8k/imgs
+  ```bash
+  python dataset.py
   ```
 
 ## Installation and Setup

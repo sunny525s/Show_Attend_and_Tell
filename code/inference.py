@@ -22,11 +22,11 @@ with open(word_map_path, "r") as j:
     word2id = json.load(j)
 
 # Hyperparameters (must match training)
-embed_dim     = 512
+embed_dim = 512
 attention_dim = 512
-decoder_dim   = 512
-encoder_dim   = 1920
-vocab_size    = len(word2id)
+decoder_dim = 512
+encoder_dim = 1920
+vocab_size = len(word2id)
 
 # Instantiate models
 encoder = ImageEncoder(output_size=14).to(device)
