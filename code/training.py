@@ -3,55 +3,70 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 import torch.optim as optim
 import numpy as np
+import nltk
+from nltk.translate.meteor_score import meteor_score
 from tqdm.notebook import tqdm
 from torch.cuda.amp import autocast, GradScaler
 from torch.nn.utils.rnn import pack_padded_sequence
 from nltk.translate.bleu_score import corpus_bleu
-import nltk
-from nltk.translate.meteor_score import meteor_score
-nltk.download('wordnet')
 
 from helpers import accuracy, clip_gradient, compute_meteor_scores
-
 from decoder import Decoder
 from encoder import ImageEncoder
 
-scaler = GradScaler()
+# Download nltk
+nltk.download('wordnet')
 
-# model parameters
-embed_dim = 512      # dimension of word embeddings
-attention_dim = 512  # dimension of attention linear layers
-decoder_dim = 512    # dimension of decoder RNN
-encoder_dim = 2048
-encoder_lr = 1e-4    # learning rate for encoder if fine-tuning
-decoder_lr = 4e-4    # learning rate for decoder
-grad_clip = 5.       # clip gradients at an absolute value of
-alpha_c = 1.         # regularization parameter for 'doubly stochastic attention'
-
+# Global variables
+embed_dim = 512
+attention_dim = 512
+decoder_dim = 512
+encoder_dim = 1920
+encoder_lr = 1e-4
+decoder_lr = 4e-4
+grad_clip = 5.
+alpha_c = 1.
+num_epochs = 20
+fine_tune_encoder = False
 lr_decay_factor = 0.8
 lr_decay_patience = 8
-
-num_epochs = 10
-epochs_since_improvement = 0
-
 vocab_size = 0
-
-fine_tune_encoder = False  # fine-tune encoder?
-cudnn.benchmark = True     # set to true only if inputs to model are fixed size
-
 word2id = {}
-device = None
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Setup
+cudnn.benchmark = True
+scaler = GradScaler()
+
+def set_hyperparameter(train_config):
+    global embed_dim, attention_dim, decoder_dim, encoder_dim
+    global encoder_lr, decoder_lr, grad_clip, alpha_c
+    global num_epochs, fine_tune_encoder, lr_decay_factor, lr_decay_patience
+    global word2id, vocab_size, device
+
+    embed_dim = train_config['embed_dim']
+    attention_dim = train_config['attention_dim']
+    decoder_dim = train_config['decoder_dim']
+    encoder_dim = train_config['encoder_dim']
+    encoder_lr = train_config['encoder_lr']
+    decoder_lr = train_config['decoder_lr']
+    grad_clip = train_config['grad_clip']
+    alpha_c = train_config['alpha_c']
+    num_epochs = train_config['num_epochs']
+    fine_tune_encoder = train_config['fine_tune_encoder']
+    lr_decay_factor = train_config['lr_decay_factor']
+    lr_decay_patience = train_config['lr_decay_patience']
+    word2id = train_config['word2id']
+    vocab_size = len(word2id)
+    device = train_config['device']
 
 def train_epoch(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_optimizer):
     losses = []
     top5accs = []
-
     decoder.train()
     encoder.train()
 
-    scaler = GradScaler()
-
-    for i, (imgs, caps, cap_lens) in enumerate(tqdm(train_loader, total=len(train_loader))):
+    for imgs, caps, cap_lens in tqdm(train_loader, total=len(train_loader)):
         imgs = imgs.to(device, non_blocking=True)
         caps = caps.to(device, non_blocking=True)
         cap_lens = cap_lens.to(device, non_blocking=True)
@@ -91,23 +106,9 @@ def train_epoch(train_loader, encoder, decoder, criterion, encoder_optimizer, de
 
     return np.mean(losses), np.mean(top5accs)
 
-def compute_meteor_scores(references_ids, hypotheses_ids):
-    meteor_scores = []
-    # printed = False
-    for refs, hyp in zip(references_ids, hypotheses_ids):
-        # Convert refs and hyp to strings
-        refs_str = [[id2word[tok] for tok in ref] for ref in refs]
-        hyp_str = [id2word[tok] for tok in hyp]
-
-        score = meteor_score(refs_str, hyp_str)
-        meteor_scores.append(score)
-
-    return sum(meteor_scores) / len(meteor_scores) if meteor_scores else 0.0
-
 def val_epoch(val_loader, encoder, decoder, criterion):
     losses = []
     top5accs = []
-
     decoder.eval()
     if encoder is not None:
         encoder.eval()
@@ -116,7 +117,7 @@ def val_epoch(val_loader, encoder, decoder, criterion):
     hypotheses = []
 
     with torch.no_grad():
-        for i, (imgs, caps, cap_lens, all_caps) in enumerate(tqdm(val_loader, total=len(val_loader))):
+        for imgs, caps, cap_lens, all_caps in tqdm(val_loader, total=len(val_loader)):
             imgs = imgs.to(device, non_blocking=True)
             caps = caps.to(device, non_blocking=True)
             cap_lens = cap_lens.to(device, non_blocking=True)
@@ -151,51 +152,17 @@ def val_epoch(val_loader, encoder, decoder, criterion):
             hypotheses.extend(temp_preds)
 
         assert len(references) == len(hypotheses)
-        bleu_scores = [corpus_bleu(references, hypotheses),
-                       corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0)),
-                       corpus_bleu(references, hypotheses, weights=(0.5, 0.5, 0, 0)),
-                       corpus_bleu(references, hypotheses, weights=(1.0, 0, 0, 0))]
+        bleu_scores = [
+            corpus_bleu(references, hypotheses),
+            corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0)),
+            corpus_bleu(references, hypotheses, weights=(0.25, 0.5, 0, 0)),
+            corpus_bleu(references, hypotheses, weights=(1.0, 0, 0, 0)),
+        ]
         m_score = compute_meteor_scores(references, hypotheses)
 
     return np.mean(losses), np.mean(top5accs), bleu_scores, m_score
 
-
-def set_hyperparameter(train_config):
-    # model setup
-    global embed_dim 
-    embed_dim = train_config['embed_dim']
-    global attention_dim
-    attention_dim = train_config['attention_dim']
-    global decoder_dim
-    decoder_dim = train_config['decoder_dim']
-    global encoder_dim
-    encoder_dim = train_config['encoder_dim']
-    global encoder_lr
-    encoder_lr = train_config['encoder_lr']
-    global decoder_lr
-    decoder_lr = train_config['decoder_lr']
-    global grad_clip
-    grad_clip = train_config['grad_clip']
-    global alpha_c 
-    alpha_c = train_config['alpha_c']
-    global num_epochs 
-    num_epochs = train_config['num_epochs']
-    global fine_tune_encoder 
-    fine_tune_encoder = train_config['fine_tune_encoder']
-    global lr_decay_factor 
-    lr_decay_factor = train_config['lr_decay_factor']
-    global lr_decay_patience
-    lr_decay_patience = train_config['lr_decay_patience']
-    global word2id
-    word2id = train_config['word2id']
-    global vocab_size
-    vocab_size = len(word2id)
-    global device
-    device = train_config['device']
-
 def main_train_loop(train_loader, val_loader):
-    epochs_since_improvement = 0
-
     decoder = Decoder(attention_dim, embed_dim, decoder_dim, vocab_size, encoder_dim)
     decoder_optimizer = optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()), lr=decoder_lr)
 
@@ -207,37 +174,44 @@ def main_train_loop(train_loader, val_loader):
     encoder = encoder.to(device)
     decoder = decoder.to(device)
 
-    # lr scheduler
-    encoder_lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(encoder_optimizer, mode='max', factor=lr_decay_factor, patience=lr_decay_patience) if fine_tune_encoder else None
-    decoder_lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(decoder_optimizer, mode='max', factor=lr_decay_factor, patience=lr_decay_patience)
+    encoder_lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        encoder_optimizer, mode='max', factor=lr_decay_factor, patience=lr_decay_patience
+    ) if fine_tune_encoder else None
+    decoder_lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        decoder_optimizer, mode='max', factor=lr_decay_factor, patience=lr_decay_patience
+    )
 
-    # criterion for loss
     criterion = nn.CrossEntropyLoss().to(device)
 
-    # loop
     best_bleus = np.zeros(4)
     best_avg = 0.
     best_meteor = 0.
+    epochs_since_improvement = 0
+
     for epoch in range(1, num_epochs + 1):
         loss_train, acc_train = train_epoch(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_optimizer)
         loss_val, acc_val, bleu_vals, m_score = val_epoch(val_loader, encoder, decoder, criterion)
 
-        # reduce the learning rate on plateau
         decoder_lr_scheduler.step(bleu_vals[3])
         if fine_tune_encoder:
             encoder_lr_scheduler.step(bleu_vals[3])
 
-        # check if there was an improvement
         score_avg = (np.sum(bleu_vals) + m_score) / 5
         is_best = score_avg > best_avg
+
         best_bleus = np.maximum(bleu_vals, best_bleus)
         best_meteor = max(m_score, best_meteor)
         best_avg = max(score_avg, best_avg)
+
         if not is_best:
             epochs_since_improvement += 1
         else:
             epochs_since_improvement = 0
 
-        print('-' * 40)
-        print(f'epoch: {epoch}, train loss: {loss_train:.4f}, train acc: {acc_train:.2f}%, valid loss: {loss_val:.4f}, valid acc: {acc_val:.2f}%, best BLEU-1: {best_bleus[3]:.4f}, best BLEU-2: {best_bleus[2]:.4f}, best BLEU-3: {best_bleus[1]:.4f}, best BLEU-4: {best_bleus[0]:.4f}, best METEOR: {best_meteor:.4f}')
-        print('-' * 40)
+        print('-' * 50)
+        print(f'Epoch {epoch}:')
+        print(f'Train Loss: {loss_train:.4f}, Train Acc: {acc_train:.2f}%')
+        print(f'Valid Loss: {loss_val:.4f}, Valid Acc: {acc_val:.2f}%')
+        print(f'Best BLEUs: 1: {best_bleus[3]:.4f}, 2: {best_bleus[2]:.4f}, 3: {best_bleus[1]:.4f}, 4: {best_bleus[0]:.4f}')
+        print(f'Best METEOR: {best_meteor:.4f}')
+        print('-' * 50)

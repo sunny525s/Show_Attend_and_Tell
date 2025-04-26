@@ -30,6 +30,19 @@ def clip_gradient(optimizer, grad_clip):
             if param.grad is not None:
                 param.grad.data.clamp_(-grad_clip, grad_clip)
 
+def compute_meteor_scores(references_ids, hypotheses_ids):
+    meteor_scores = []
+    # printed = False
+    for refs, hyp in zip(references_ids, hypotheses_ids):
+        # Convert refs and hyp to strings
+        refs_str = [[id2word[tok] for tok in ref] for ref in refs]
+        hyp_str = [id2word[tok] for tok in hyp]
+
+        score = meteor_score(refs_str, hyp_str)
+        meteor_scores.append(score)
+
+    return sum(meteor_scores) / len(meteor_scores) if meteor_scores else 0.0
+
 def save_checkpoint(
     epoch: int,
     epochs_since_improvement: int,
