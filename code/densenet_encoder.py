@@ -1,13 +1,13 @@
 import torch.nn as nn
-from torchvision.models import vgg19
+from torchvision.models import densenet201
 
 class ImageEncoder(nn.Module):
   def __init__(self, output_size=14):
     super(ImageEncoder, self).__init__()
     self.output_size = output_size
 
-    vgg = vgg19(pretrained=True) # use VGG19 as pretrained model for now
-    self.model = nn.Sequential(*list(vgg.children())[:-1])
+    densenet = densenet201(pretrained=True)
+    self.model = nn.Sequential(*list(densenet.children())[:-1])
 
     self.pool = nn.AdaptiveAvgPool2d((output_size, output_size))
     self.fine_tune()

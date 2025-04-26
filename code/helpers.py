@@ -1,7 +1,6 @@
 import torch
 import numpy as np
-import nltk
-from nltk.translate.meteor_score import meteor_score
+from pathlib import Path
 
 
 def accuracy(scores, targets, k):
@@ -31,20 +30,56 @@ def clip_gradient(optimizer, grad_clip):
             if param.grad is not None:
                 param.grad.data.clamp_(-grad_clip, grad_clip)
 
-def compute_meteor_scores(references_ids, hypotheses_ids, id2word):
-    meteor_scores = []
-    # printed = False
-    for refs, hyp in zip(references_ids, hypotheses_ids):
-        # Convert refs and hyp to strings
-        refs_str = [[id2word[tok] for tok in ref] for ref in refs]
-        hyp_str = [id2word[tok] for tok in hyp]
+def save_checkpoint(
+    epoch: int,
+    epochs_since_improvement: int,
+    encoder: torch.nn.Module,
+    decoder: torch.nn.Module,
+    encoder_optimizer: torch.optim.Optimizer | None,
+    decoder_optimizer: torch.optim.Optimizer,
+    bleu4: float,
+    is_best: bool,
+    ckpt_dir: str = "checkpoints",
+    prefix: str = "image_captioning"
+):
+    """
+    Save model + optimizer state_dicts.
 
-        # if not printed:
-        #     print(refs_str)
-        #     print(hyp_str)
-        #     printed = True
+    Args:
+        epoch: current epoch (1-indexed).
+        epochs_since_improvement: epochs since last BLEU-4 improvement.
+        encoder: the encoder network.
+        decoder: the decoder network.
+        encoder_optimizer: optimizer for encoder (or None).
+        decoder_optimizer: optimizer for decoder.
+        bleu4: current BLEU-4 score.
+        is_best: True if this is the best model so far.
+        ckpt_dir: directory to save checkpoints into.
+        prefix: filename prefix (no extension).
+    """
+    ckpt_path = Path(ckpt_dir)
+    ckpt_path.mkdir(exist_ok=True)
 
-        score = meteor_score(refs_str, hyp_str)
-        meteor_scores.append(score)
+    state = {
+        "epoch": epoch,
+        "epochs_since_improvement": epochs_since_improvement,
+        "bleu-4": bleu4,
+        "encoder_state_dict": encoder.state_dict(),
+        "decoder_state_dict": decoder.state_dict(),
+        "decoder_optimizer_state_dict": decoder_optimizer.state_dict(),
+    }
+    # Only include encoder optimizer if it exists
+    if encoder_optimizer is not None:
+        state["encoder_optimizer_state_dict"] = encoder_optimizer.state_dict()
 
-    return sum(meteor_scores) / len(meteor_scores) if meteor_scores else 0.0
+    # Filename with zero-padded epoch number
+    fname = f"{prefix}_epoch{epoch:02d}.pth"
+    full_path = ckpt_path / fname
+    torch.save(state, full_path)
+    print(f"Checkpoint saved: {full_path}")
+
+    # If this is the best model so far, overwrite the "best" symlink
+    if is_best:
+        best_path = ckpt_path / f"{prefix}_best.pth"
+        torch.save(state, best_path)
+        print(f"*** New best model saved: {best_path} ***")

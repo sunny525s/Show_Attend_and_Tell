@@ -3,7 +3,6 @@ import torch.nn as nn
 
 from attention_rnn import Attention
 
-
 class Decoder(nn.Module):
     """
     LSTM decoder with attention for image captioning.

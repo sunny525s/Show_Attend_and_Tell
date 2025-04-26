@@ -4,6 +4,9 @@ from tqdm.notebook import tqdm
 from torch.cuda.amp import autocast, GradScaler
 from torch.nn.utils.rnn import pack_padded_sequence
 from nltk.translate.bleu_score import corpus_bleu
+import nltk
+from nltk.translate.meteor_score import meteor_score
+nltk.download('wordnet')
 
 from helpers import accuracy, clip_gradient, compute_meteor_scores
 
@@ -11,12 +14,14 @@ torch.backends.cudnn.benchmark = True  # Optimize conv ops
 
 scaler = GradScaler()
 
-def train_epoch(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_optimizer, device, grad_clip=5., alpha_c=1.):
+def train_epoch(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_optimizer):
     losses = []
     top5accs = []
 
     decoder.train()
     encoder.train()
+
+    scaler = GradScaler()
 
     for i, (imgs, caps, cap_lens) in enumerate(tqdm(train_loader, total=len(train_loader))):
         imgs = imgs.to(device, non_blocking=True)
@@ -32,8 +37,8 @@ def train_epoch(train_loader, encoder, decoder, criterion, encoder_optimizer, de
             scores, caps_sorted, decode_lengths, alphas, sort_ind = decoder(imgs, caps, cap_lens)
             targets = caps_sorted[:, 1:]
 
-            scores_packed = pack_padded_sequence(scores, decode_lengths.cpu(), batch_first=True).data
-            targets_packed = pack_padded_sequence(targets, decode_lengths.cpu(), batch_first=True).data
+            scores_packed = pack_padded_sequence(scores, decode_lengths, batch_first=True).data
+            targets_packed = pack_padded_sequence(targets, decode_lengths, batch_first=True).data
 
             loss = criterion(scores_packed, targets_packed) + alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
 
@@ -58,7 +63,20 @@ def train_epoch(train_loader, encoder, decoder, criterion, encoder_optimizer, de
 
     return np.mean(losses), np.mean(top5accs)
 
-def val_epoch(val_loader, encoder, decoder, criterion, device, word2id, alpha_c=1.):
+def compute_meteor_scores(references_ids, hypotheses_ids):
+    meteor_scores = []
+    # printed = False
+    for refs, hyp in zip(references_ids, hypotheses_ids):
+        # Convert refs and hyp to strings
+        refs_str = [[id2word[tok] for tok in ref] for ref in refs]
+        hyp_str = [id2word[tok] for tok in hyp]
+
+        score = meteor_score(refs_str, hyp_str)
+        meteor_scores.append(score)
+
+    return sum(meteor_scores) / len(meteor_scores) if meteor_scores else 0.0
+
+def val_epoch(val_loader, encoder, decoder, criterion):
     losses = []
     top5accs = []
 
@@ -81,8 +99,8 @@ def val_epoch(val_loader, encoder, decoder, criterion, device, word2id, alpha_c=
 
             scores_copy = scores.clone()
 
-            scores = pack_padded_sequence(scores, decode_lengths.cpu(), batch_first=True).data
-            targets = pack_padded_sequence(targets, decode_lengths.cpu(), batch_first=True).data
+            scores = pack_padded_sequence(scores, decode_lengths, batch_first=True).data
+            targets = pack_padded_sequence(targets, decode_lengths, batch_first=True).data
 
             loss = criterion(scores, targets) + alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
             top5 = accuracy(scores, targets, 5)
@@ -105,12 +123,10 @@ def val_epoch(val_loader, encoder, decoder, criterion, device, word2id, alpha_c=
             hypotheses.extend(temp_preds)
 
         assert len(references) == len(hypotheses)
-        bleu_scores = [corpus_bleu(references, hypotheses), 
+        bleu_scores = [corpus_bleu(references, hypotheses),
                        corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0)),
                        corpus_bleu(references, hypotheses, weights=(0.25, 0.5, 0, 0)),
                        corpus_bleu(references, hypotheses, weights=(1.0, 0, 0, 0))]
-        # print("references: ", references)
-        # print("hypotheses: ", hypotheses)
         m_score = compute_meteor_scores(references, hypotheses)
 
     return np.mean(losses), np.mean(top5accs), bleu_scores, m_score
