@@ -1,5 +1,9 @@
-nltk
-numpy
 torch
 torchvision
-tensorboardX
+numpy
+nltk
+tqdm
+scikit-image
+opencv-python
+matplotlib
+pillow
