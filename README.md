@@ -34,18 +34,18 @@ After setting up the dataset and installing the dependencies, you can start trai
 
    - Run the following command to generate the training and validation splits:
      ```bash
-     python data_prep.py
+     python src/data_prep.py
      ```
 
 2. **Train the Model:**
 
    - Start training with:
      ```bash
-     python main.py
+     python src/main.py
      ```
 
 3. **Inference (Caption Generation):**
    - To view the generated captions for a given image, run:
      ```bash
-     python inference.py
+     python src/inference.py
      ```
