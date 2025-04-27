@@ -1,4 +1,4 @@
-import json
+import argparse
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -44,6 +44,55 @@ def _plot_attention(
         )
         plt.imshow(alpha_up, alpha=0.6, cmap="gray")
     plt.tight_layout()
+
+    save_dir = "results/"
+    os.makedirs(save_dir, exist_ok=True)
+    filename = os.path.basename(image_path).split('.')[0] + '_attention.png'
+    save_path = os.path.join(save_dir, filename)
+    plt.savefig(save_path)
+    print(f"Saved attention plot to {save_path}")
+
+    plt.show()
+
+
+def _plot_attention_for_one_word(
+    image_path: str,
+    caption: list,
+    alphas: np.ndarray,
+    grid_size: int,
+    word_index: int = 0,
+    upsample: int = 24,
+):
+    """Display original and attention image for one word in caption, with caption as a label."""
+    img = Image.open(image_path).convert("RGB")
+    img = img.resize([grid_size * upsample] * 2, Image.LANCZOS)
+
+    alpha_map = alphas[word_index + 1]
+    alpha_map = alpha_map.reshape(grid_size, grid_size)
+    alpha_up = skimage.transform.pyramid_expand(alpha_map, upscale=upsample, sigma=8)
+
+    # caption space
+    fig, axs = plt.subplots(1, 2, figsize=(14, 8))
+    fig.subplots_adjust(bottom=-0.01)
+
+    axs[0].imshow(img)
+    axs[0].axis('off')
+    axs[0].set_title("Original Image")
+
+    axs[1].imshow(img)
+    axs[1].imshow(alpha_up, alpha=0.6, cmap="gray")
+    axs[1].axis('off')
+    axs[1].set_title(f"Attention on: '{caption[word_index]}'")
+
+    formatted_caption = []
+    for i, word in enumerate(caption):
+        if i == word_index:
+            formatted_caption.append(f"[{word}]") 
+        else:
+            formatted_caption.append(word)
+    caption_str = " ".join(formatted_caption)
+
+    fig.text(0.5, 0.05, caption_str, ha='center', fontsize=24)
     plt.show()
 
 
@@ -193,7 +242,7 @@ def display_caption_image(encoder, decoder, image_path, beam_size=5):
   # return caption, alphas
 
 
-def main():
+def main(image_path):
     word2id = get_wordmap()
     vocab_size = len(word2id)
 
@@ -220,9 +269,6 @@ def main():
     encoder.eval()
     decoder.eval()
 
-    # Choose image
-    image_path = "data/1030985833_b0902ea560.jpg"
-
     # Show input image
     img = Image.open(image_path).convert("RGB")
     plt.figure(figsize=(6, 6))
@@ -248,7 +294,12 @@ def main():
 
     # Plot attention
     _plot_attention(image_path=image_path, caption=caption, alphas=alphas, grid_size=14)
+    _plot_attention_for_one_word(image_path=image_path, caption=caption, alphas=alphas, grid_size=14)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Run attention visualization.")
+    parser.add_argument('--image_path', type=str, required=True, help="Path to input image.")
+
+    args = parser.parse_args()
+    main(args.image_path)

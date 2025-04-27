@@ -5,7 +5,7 @@ import os
 import json
 from nltk.translate.meteor_score import meteor_score
 import nltk
-from config import CAPTION_PATH, WORD_DICT, CHECKPOINT_PATH
+from config import CAPTION_PATH, WORD_DICT
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

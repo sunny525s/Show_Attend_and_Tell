@@ -17,7 +17,6 @@ from helpers import save_checkpoint, get_wordmap
 import nltk
 from config import *
 
-
 def setup_models(vocab_size, device, fine_tune_encoder=False, checkpoint_path=CHECKPOINT_PATH):
     encoder = ImageEncoder()
     encoder.fine_tune(fine_tune_encoder)
@@ -36,22 +35,25 @@ def setup_models(vocab_size, device, fine_tune_encoder=False, checkpoint_path=CH
         params=filter(lambda p: p.requires_grad, decoder.parameters()), lr=DECODER_LR
     )
 
+    start_epoch = 0
+
     # Load checkpoint if existing
-    if os.path.isfile(checkpoint_path):
-        checkpoint = torch.load(checkpoint_path, weights_only=False)
-        print(f"Loading checkpoint from {checkpoint_path} at epoch  {checkpoint['epoch']}")
+    if os.path.isfile(f"{checkpoint_path}/image_captioning_best.pth"):
+        checkpoint = torch.load(f"{checkpoint_path}/image_captioning_best.pth", map_location=device, weights_only=False)
+        print(f"Loading checkpoint from {checkpoint_path}/image_captioning_best.pth at epoch {checkpoint['epoch']}")
         decoder.load_state_dict(checkpoint['decoder_state_dict'])
         decoder_optimizer.load_state_dict(checkpoint    ['decoder_optimizer_state_dict'])
         encoder.load_state_dict(checkpoint['encoder_state_dict'])
         if fine_tune_encoder:
             encoder_optimizer.load_state_dict(checkpoint    ['encoder_optimizer_state_dict'])
+        start_epoch = checkpoint['epoch']
     else:
         print(f"No checkpoint found at {checkpoint_path}. Starting  from scratch.")
 
     encoder = encoder.to(device)
     decoder = decoder.to(device)
 
-    return encoder, decoder, encoder_optimizer, decoder_optimizer
+    return encoder, decoder, encoder_optimizer, decoder_optimizer, start_epoch
 
 
 def setup_schedulers(encoder_optimizer, decoder_optimizer, fine_tune_encoder=False):
@@ -85,6 +87,7 @@ def run_training(
     encoder_lr_scheduler,
     decoder_lr_scheduler,
     device,
+    start_epoch,
     num_epochs=NUM_EPOCHS,
     patience=PATIENCE
 ):
@@ -95,7 +98,7 @@ def run_training(
     epochs_since_improvement = 0
 
     scaler = GradScaler(device.type)
-    for epoch in range(1, num_epochs + 1):
+    for epoch in range(start_epoch + 1, num_epochs + 1):
         loss_train, acc_train = train_epoch(
             train_loader,
             encoder,
@@ -165,7 +168,7 @@ if __name__ == "__main__":
     word2id = get_wordmap()
     vocab_size = len(word2id)
 
-    encoder, decoder, encoder_optimizer, decoder_optimizer = setup_models(
+    encoder, decoder, encoder_optimizer, decoder_optimizer, start_epoch = setup_models(
         vocab_size, device, fine_tune_encoder=FINE_TUNE_ENCODER
     )
     encoder_lr_scheduler, decoder_lr_scheduler = setup_schedulers(
@@ -182,6 +185,7 @@ if __name__ == "__main__":
         encoder_lr_scheduler,
         decoder_lr_scheduler,
         device,
+        start_epoch,
         num_epochs=NUM_EPOCHS,
         patience=PATIENCE
     )
