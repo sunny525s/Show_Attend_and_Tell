@@ -23,8 +23,10 @@ This project implements a neural image caption generation model that employs a v
      ```
 
 3. **Download Flickr8k Dataset:**
-   - Download the image ZIP file from [Flickr8K](https://github.com/jbrownlee/Datasets/releases/download/Flickr8k/Flickr8k_Dataset.zip).
-   - Extract its contents and rename the extracted folder to `dataset`.
+   - Download the image ZIP file from [Flickr8K](https://github.com/jbrownlee/Datasets/releases/download/Flickr8k/Flickr8k_Dataset.zip), then run:
+   ```bash
+   unzip Flickr8k_Dataset.zip -d temp_folder && mv temp_folder/* data/ && rmdir temp_folder
+   ```
 
 ## Running the Project
 
@@ -49,3 +51,7 @@ After setting up the dataset and installing the dependencies, you can start trai
      ```bash
      python src/inference.py
      ```
+
+```
+
+```

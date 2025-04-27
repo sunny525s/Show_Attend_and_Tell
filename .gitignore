@@ -1,7 +1,6 @@
-dataset/
+data/*
 checkpoints/
-captions/*
-!captions/dataset.json
+!data/captions/dataset.json
 
 **/__pycache__/
 **/.DS_Store
