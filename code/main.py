@@ -18,14 +18,11 @@ import nltk
 from config import *
 
 
-def setup_models(vocab_size, device, fine_tune_encoder=False):
+def setup_models(vocab_size, device, fine_tune_encoder=False, checkpoint_path=CHECKPOINT_PATH):
     encoder = ImageEncoder()
     encoder.fine_tune(fine_tune_encoder)
 
     decoder = Decoder(ATTENTION_DIM, EMBED_DIM, DECODER_DIM, vocab_size, ENCODER_DIM)
-
-    encoder = encoder.to(device)
-    decoder = decoder.to(device)
 
     encoder_optimizer = (
         optim.Adam(
@@ -38,6 +35,21 @@ def setup_models(vocab_size, device, fine_tune_encoder=False):
     decoder_optimizer = optim.Adam(
         params=filter(lambda p: p.requires_grad, decoder.parameters()), lr=DECODER_LR
     )
+
+    # Load checkpoint if existing
+    if os.path.isfile(checkpoint_path):
+        checkpoint = torch.load(checkpoint_path, weights_only=False)
+        print(f"Loading checkpoint from {checkpoint_path} at epoch  {checkpoint['epoch']}")
+        decoder.load_state_dict(checkpoint['decoder_state_dict'])
+        decoder_optimizer.load_state_dict(checkpoint    ['decoder_optimizer_state_dict'])
+        encoder.load_state_dict(checkpoint['encoder_state_dict'])
+        if fine_tune_encoder:
+            encoder_optimizer.load_state_dict(checkpoint    ['encoder_optimizer_state_dict'])
+    else:
+        print(f"No checkpoint found at {checkpoint_path}. Starting  from scratch.")
+
+    encoder = encoder.to(device)
+    decoder = decoder.to(device)
 
     return encoder, decoder, encoder_optimizer, decoder_optimizer
 
@@ -74,6 +86,7 @@ def run_training(
     decoder_lr_scheduler,
     device,
     num_epochs=NUM_EPOCHS,
+    patience=PATIENCE
 ):
     criterion = nn.CrossEntropyLoss().to(device)
     best_bleus = np.zeros(4)
@@ -110,7 +123,7 @@ def run_training(
 
         print("-" * 40)
         print(
-            f"epoch: {epoch}, train loss: {loss_train:.4f}, train acc: {acc_train:.2f}%, valid loss: {loss_val:.4f}, valid acc: {acc_val:.2f}%, best BLEU-1: {best_bleus[3]:.4f}, best BLEU-2: {best_bleus[2]:.4f}, best BLEU-3: {best_bleus[1]:.4f}, best BLEU-4: {best_bleus[0]:.4f}, best METEOR: {best_meteor:.4f}"
+            f"epoch: {epoch}, train loss: {loss_train:.4f}, train acc: {acc_train:.2f}%, valid loss: {loss_val:.4f}, valid acc: {acc_val:.2f}%, best BLEU-1: {best_bleus[0]:.4f}, best BLEU-2: {best_bleus[1]:.4f}, best BLEU-3: {best_bleus[2]:.4f}, best BLEU-4: {best_bleus[3]:.4f}, best METEOR: {best_meteor:.4f}"
         )
         print("-" * 40)
 
@@ -121,9 +134,16 @@ def run_training(
             decoder=decoder,
             encoder_optimizer=encoder_optimizer,
             decoder_optimizer=decoder_optimizer,
-            bleu4=bleu_vals[0],
+            bleu_scores=bleu_vals,
+            meteor_score=m_score,
+            val_acc = acc_val,
+            train_acc = acc_train,
             is_best=is_best,
         )
+
+        if epochs_since_improvement >= patience:
+            print(f"Early stopping: No BLEU-4 improvement for {patience} epochs.")
+            break
 
 
 if __name__ == "__main__":
@@ -163,4 +183,5 @@ if __name__ == "__main__":
         decoder_lr_scheduler,
         device,
         num_epochs=NUM_EPOCHS,
+        patience=PATIENCE
     )

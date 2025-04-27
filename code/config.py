@@ -22,6 +22,8 @@ LR_DECAY_PATIENCE = 8
 NUM_EPOCHS = 20
 FINE_TUNE_ENCODER = False
 
+PATIENCE = 4
+
 BEAM_SIZE = 5
 
 # DenseNet201
@@ -29,4 +31,4 @@ IMG_SIZE = 224
 IMG_MEAN = [0.485, 0.456, 0.406]
 IMG_STD = [0.229, 0.224, 0.225]
 
-CHECKPOINT_PATH = "checkpoints/image_captioning_best.pth"
+CHECKPOINT_PATH = "checkpoints/"

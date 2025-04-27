@@ -5,8 +5,9 @@ import os
 import json
 from nltk.translate.meteor_score import meteor_score
 import nltk
-from config import CAPTION_PATH, WORD_DICT
+from config import CAPTION_PATH, WORD_DICT, CHECKPOINT_PATH
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def accuracy(scores, targets, k):
     """
@@ -66,7 +67,10 @@ def save_checkpoint(
     decoder: torch.nn.Module,
     encoder_optimizer: torch.optim.Optimizer | None,
     decoder_optimizer: torch.optim.Optimizer,
-    bleu4: float,
+    bleu_scores: list[float],
+    meteor_score: float,
+    val_acc: float,
+    train_acc: float,
     is_best: bool,
     ckpt_dir: str = "checkpoints",
     prefix: str = "image_captioning",
@@ -92,7 +96,10 @@ def save_checkpoint(
     state = {
         "epoch": epoch,
         "epochs_since_improvement": epochs_since_improvement,
-        "bleu-4": bleu4,
+        "bleu-score": bleu_scores,
+        "meteor-score": meteor_score,
+        "validation-accuracy": val_acc,
+        "training-accuracy": train_acc,
         "encoder_state_dict": encoder.state_dict(),
         "decoder_state_dict": decoder.state_dict(),
         "decoder_optimizer_state_dict": decoder_optimizer.state_dict(),

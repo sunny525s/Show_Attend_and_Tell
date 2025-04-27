@@ -42,7 +42,7 @@ def _plot_attention(
         alpha_up = skimage.transform.pyramid_expand(
             alpha_map, upscale=upsample, sigma=8
         )
-        plt.imshow(alpha_up, alpha=0.8, cmap="gray")
+        plt.imshow(alpha_up, alpha=0.6, cmap="gray")
     plt.tight_layout()
     plt.show()
 
@@ -165,6 +165,33 @@ def generate_caption(
 
     return (caption, alphas) if return_attention else caption
 
+def display_caption_image(encoder, decoder, image_path, beam_size=5):
+  # Display Image
+  img = Image.open(image_path).convert("RGB")
+  plt.figure(figsize=(6,6))
+  plt.imshow(img)
+  plt.axis("off")
+  plt.title("Input Image")
+  plt.show()
+
+  word2id = get_wordmap()
+  # Run inference and plot attention
+  caption, alphas = generate_caption(
+      encoder=encoder,
+      decoder=decoder,
+      image_path=image_path,
+      word_map=word2id,
+      beam_size=beam_size,
+      return_attention=True,
+      device=device,
+  )
+  # Print out the final caption
+  print("Predicted caption:")
+  print(" ".join(caption))
+
+  _plot_attention(image_path, caption, alphas, grid_size=14)
+  # return caption, alphas
+
 
 def main():
     word2id = get_wordmap()
@@ -181,10 +208,14 @@ def main():
     ).to(device)
 
     # Load checkpoint
-    ckpt = torch.load(CHECKPOINT_PATH, map_location=device)
+    ckpt = torch.load(f"{CHECKPOINT_PATH}/image_captioning_best.pth", map_location=device, weights_only=False)
     encoder.load_state_dict(ckpt["encoder_state_dict"])
     decoder.load_state_dict(ckpt["decoder_state_dict"])
-    print(f"Loaded checkpoint from epoch {ckpt['epoch']}, BLEU-4={ckpt['bleu-4']:.4f}")
+    bleu_scores = ckpt["bleu-score"]
+    meteor_score = ckpt["meteor-score"]
+    val_acc = ckpt["validation-accuracy"]
+    train_acc = ckpt["training-accuracy"]
+    print(f"Loaded checkpoint from epoch {ckpt['epoch']}, BLEU-1={bleu_scores[0]:.4f}, BLEU-2={bleu_scores[1]:.4f}, BLEU-3={bleu_scores[2]:.4f}, BLEU-4={bleu_scores[3]:.4f}, meteor score: {meteor_score:.4f}, training accuracy: {train_acc:.4f}, validation accuracy: {val_acc:.4f}")
 
     encoder.eval()
     decoder.eval()

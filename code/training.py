@@ -145,10 +145,10 @@ def val_epoch(val_loader, encoder, decoder, criterion, device):
 
         assert len(references) == len(hypotheses)
         bleu_scores = [
-            corpus_bleu(references, hypotheses),
-            corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0)),
-            corpus_bleu(references, hypotheses, weights=(0.25, 0.5, 0, 0)),
             corpus_bleu(references, hypotheses, weights=(1.0, 0, 0, 0)),
+            corpus_bleu(references, hypotheses, weights=(0.5, 0.5, 0, 0)),
+            corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0)),
+            corpus_bleu(references, hypotheses),            
         ]
         m_score = compute_meteor_scores(references, hypotheses)
 
