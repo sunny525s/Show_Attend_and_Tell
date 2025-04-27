@@ -51,7 +51,3 @@ After setting up the dataset and installing the dependencies, you can start trai
      ```bash
      python src/inference.py
      ```
-
-```
-
-```
