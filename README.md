@@ -173,12 +173,6 @@ In the final example, we visualize the model’s attention at every decoding ste
 
 ## Conclusion
 
-Here’s a clear and concise **Conclusion** section based on your bullet points and the project’s context:
-
----
-
-## Conclusion
-
 In this project, we re-implemented the _Show, Attend and Tell_ model with a focus on the soft attention mechanism and evaluated its performance using the Flickr8k dataset. Our key takeaways are as follows:
 
 - We successfully replicated the improvement over AlexNet by replacing it with more modern pretrained CNN encoders such as DenseNet, VGG, GoogLeNet, and especially ResNet.
