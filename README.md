@@ -20,17 +20,17 @@ The strong BLEU and METEOR scores achieved by the soft attention model underscor
 
 The attention mechanism computes a context vector as a weighted sum over annotation vectors extracted from different image regions. These weights, learned through the model, reflect the relevance of each region at a given time step. This is formalized in Equation (13) of the paper:
 
-$$
+```math
 \mathbb{E}_{p(s_t | a)}[\hat{z}_t] = \sum_{i=1}^{L} \alpha_{t,i} a_i
-$$
+```
 
 Here, \( \alpha\_{t,i} \) represents the attention weight for region \( i \) at time step \( t \), and \( a_i \) is the annotation vector for that region. This formulation allows the model to softly attend to all regions, maintaining differentiability and enabling end-to-end training via backpropagation.
 
 To further simplify the learning process while preserving the benefits of attention, the paper introduces the Normalized Weighted Geometric Mean (NWGM). This approximates the marginal likelihood over attention locations during word generation:
 
-$$
+```math
 NWGM[p(y_t = k \mid a)] = \frac{\exp(\mathbb{E}_{p(s_t | a)}[n_{t,k}])}{\sum_j \exp(\mathbb{E}_{p(s_t | a)}[n_{t,j}])}
-$$
+```
 
 This deterministic expectation replaces sampling with a smooth approximation, reducing variance in gradient estimation and making training more stable.
 
