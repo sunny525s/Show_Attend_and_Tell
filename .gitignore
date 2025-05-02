@@ -1,5 +1,10 @@
-__pycache__
-.vscode
+data/*
+!data/captions/
+data/captions/*
+!data/captions/dataset.json
 
-data/flickr8k
-.DS_Store
+checkpoints/
+
+
+**/__pycache__/
+**/.DS_Store
