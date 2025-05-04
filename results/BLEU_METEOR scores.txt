@@ -1,0 +1,167 @@
+[DenseNet]
+----------------------------------------
+epoch: 1
+train loss: 4.8255, train acc: 53.37%, valid loss: 4.1820, valid acc: 61.98%, best BLEU-1: 0.6127, best BLEU-2: 0.4315, best BLEU-3: 0.2253, best BLEU-4: 0.1284, best METEOR: 0.3654
+----------------------------------------
+epoch: 2
+train loss: 4.0003, train acc: 64.22%, valid loss: 3.9241, valid acc: 65.34%, best BLEU-1: 0.6335, best BLEU-2: 0.4508, best BLEU-3: 0.2421, best BLEU-4: 0.1398, best METEOR: 0.3867
+----------------------------------------
+epoch: 3
+train loss: 3.6968, train acc: 68.26%, valid loss: 3.8149, valid acc: 66.77%, best BLEU-1: 0.6448, best BLEU-2: 0.4666, best BLEU-3: 0.2570, best BLEU-4: 0.1530, best METEOR: 0.3999
+----------------------------------------
+epoch: 4
+train loss: 3.4883, train acc: 71.27%, valid loss: 3.7659, valid acc: 67.65%, best BLEU-1: 0.6448, best BLEU-2: 0.4666, best BLEU-3: 0.2570, best BLEU-4: 0.1530, best METEOR: 0.4035
+----------------------------------------
+epoch: 5
+train loss: 3.3234, train acc: 73.67%, valid loss: 3.7368, valid acc: 67.86%, best BLEU-1: 0.6448, best BLEU-2: 0.4666, best BLEU-3: 0.2570, best BLEU-4: 0.1533, best METEOR: 0.4054
+----------------------------------------
+epoch: 6
+train loss: 3.1902, train acc: 75.65%, valid loss: 3.7283, valid acc: 68.24%, best BLEU-1: 0.6481, best BLEU-2: 0.4666, best BLEU-3: 0.2594, best BLEU-4: 0.1548, best METEOR: 0.4067
+----------------------------------------
+epoch: 7
+train loss: 3.0766, train acc: 77.38%, valid loss: 3.7337, valid acc: 68.25%, best BLEU-1: 0.6481, best BLEU-2: 0.4676, best BLEU-3: 0.2626, best BLEU-4: 0.1584, best METEOR: 0.4090
+----------------------------------------
+epoch: 8
+train loss: 2.9738, train acc: 78.92%, valid loss: 3.7337, valid acc: 68.34%, best BLEU-1: 0.6481, best BLEU-2: 0.4676, best BLEU-3: 0.2626, best BLEU-4: 0.1584, best METEOR: 0.4095
+----------------------------------------
+epoch: 9
+train loss: 2.8842, train acc: 80.33%, valid loss: 3.7494, valid acc: 68.28%, best BLEU-1: 0.6481, best BLEU-2: 0.4676, best BLEU-3: 0.2626, best BLEU-4: 0.1584, best METEOR: 0.4095
+----------------------------------------
+epoch: 10
+train loss: 2.8050, train acc: 81.52%, valid loss: 3.7639, valid acc: 68.13%, best BLEU-1: 0.6481, best BLEU-2: 0.4676, best BLEU-3: 0.2626, best BLEU-4: 0.1584, best METEOR: 0.4095
+----------------------------------------
+
+
+[VGG]
+----------------------------------------
+epoch: 1
+train loss: 4.8458, train acc: 52.99%, valid loss: 4.1993, valid acc: 61.61%, best BLEU-1: 0.6119, best BLEU-2: 0.4229, best BLEU-3: 0.2169, best BLEU-4: 0.1216, best METEOR: 0.3614
+----------------------------------------
+epoch: 2
+train loss: 4.0408, train acc: 63.49%, valid loss: 3.9299, valid acc: 65.27%, best BLEU-1: 0.6279, best BLEU-2: 0.4429, best BLEU-3: 0.2366, best BLEU-4: 0.1368, best METEOR: 0.3813
+----------------------------------------
+epoch: 3
+train loss: 3.7574, train acc: 67.28%, valid loss: 3.8096, valid acc: 66.98%, best BLEU-1: 0.6329, best BLEU-2: 0.4538, best BLEU-3: 0.2461, best BLEU-4: 0.1451, best METEOR: 0.3931
+----------------------------------------
+epoch: 4
+train loss: 3.5668, train acc: 69.88%, valid loss: 3.7456, valid acc: 67.72%, best BLEU-1: 0.6412, best BLEU-2: 0.4576, best BLEU-3: 0.2500, best BLEU-4: 0.1473, best METEOR: 0.4017
+----------------------------------------
+epoch: 5
+train loss: 3.4174, train acc: 72.04%, valid loss: 3.7097, valid acc: 68.43%, best BLEU-1: 0.6478, best BLEU-2: 0.4626, best BLEU-3: 0.2544, best BLEU-4: 0.1497, best METEOR: 0.4059
+----------------------------------------
+epoch: 6
+train loss: 3.2867, train acc: 73.95%, valid loss: 3.7053, valid acc: 68.49%, best BLEU-1: 0.6478, best BLEU-2: 0.4626, best BLEU-3: 0.2544, best BLEU-4: 0.1497, best METEOR: 0.4059
+----------------------------------------
+epoch: 7
+train loss: 3.1750, train acc: 75.62%, valid loss: 3.6963, valid acc: 68.55%, best BLEU-1: 0.6478, best BLEU-2: 0.4631, best BLEU-3: 0.2552, best BLEU-4: 0.1520, best METEOR: 0.4104
+----------------------------------------
+epoch: 8
+train loss: 3.0729, train acc: 77.16%, valid loss: 3.6892, valid acc: 68.72%, best BLEU-1: 0.6478, best BLEU-2: 0.4631, best BLEU-3: 0.2552, best BLEU-4: 0.1520, best METEOR: 0.4104
+----------------------------------------
+epoch: 9
+train loss: 2.9774, train acc: 78.60%, valid loss: 3.7065, valid acc: 68.69%, best BLEU-1: 0.6478, best BLEU-2: 0.4631, best BLEU-3: 0.2552, best BLEU-4: 0.1520, best METEOR: 0.4104
+----------------------------------------
+epoch: 10
+train loss: 2.8925, train acc: 79.93%, valid loss: 3.7303, valid acc: 68.48%, best BLEU-1: 0.6478, best BLEU-2: 0.4631, best BLEU-3: 0.2552, best BLEU-4: 0.1520, best METEOR: 0.4104
+----------------------------------------
+
+[ResNet]
+----------------------------------------
+epoch: 1
+train loss: 4.8775, train acc: 52.59%, valid loss: 4.2387, valid acc: 60.96%, best BLEU-1: 0.6078, best BLEU-2: 0.4208, best BLEU-3: 0.2154, best BLEU-4: 0.1192, best METEOR: 0.3589
+----------------------------------------
+epoch: 2
+train loss: 4.1162, train acc: 62.41%, valid loss: 3.9736, valid acc: 64.28%, best BLEU-1: 0.6295, best BLEU-2: 0.4469, best BLEU-3: 0.2387, best BLEU-4: 0.1376, best METEOR: 0.3803
+----------------------------------------
+epoch: 3
+train loss: 3.8494, train acc: 65.82%, valid loss: 3.8188, valid acc: 66.65%, best BLEU-1: 0.6414, best BLEU-2: 0.4628, best BLEU-3: 0.2547, best BLEU-4: 0.1509, best METEOR: 0.3960
+----------------------------------------
+epoch: 4
+train loss: 3.6717, train acc: 68.32%, valid loss: 3.7508, valid acc: 67.62%, best BLEU-1: 0.6418, best BLEU-2: 0.4641, best BLEU-3: 0.2567, best BLEU-4: 0.1526, best METEOR: 0.4015
+----------------------------------------
+epoch: 5
+train loss: 3.5355, train acc: 70.25%, valid loss: 3.7027, valid acc: 68.21%, best BLEU-1: 0.6459, best BLEU-2: 0.4709, best BLEU-3: 0.2647, best BLEU-4: 0.1597, best METEOR: 0.4087
+----------------------------------------
+epoch: 6
+train loss: 3.4215, train acc: 71.77%, valid loss: 3.6735, valid acc: 68.67%, best BLEU-1: 0.6515, best BLEU-2: 0.4733, best BLEU-3: 0.2657, best BLEU-4: 0.1599, best METEOR: 0.4116
+----------------------------------------
+epoch: 7
+train loss: 3.3241, train acc: 73.27%, valid loss: 3.6479, valid acc: 69.19%, best BLEU-1: 0.6524, best BLEU-2: 0.4752, best BLEU-3: 0.2659, best BLEU-4: 0.1599, best METEOR: 0.4148
+----------------------------------------
+epoch: 8
+train loss: 3.2362, train acc: 74.53%, valid loss: 3.6369, valid acc: 69.35%, best BLEU-1: 0.6567, best BLEU-2: 0.4787, best BLEU-3: 0.2713, best BLEU-4: 0.1628, best METEOR: 0.4174
+----------------------------------------
+epoch: 9
+train loss: 3.1542, train acc: 75.80%, valid loss: 3.6265, valid acc: 69.47%, best BLEU-1: 0.6567, best BLEU-2: 0.4787, best BLEU-3: 0.2713, best BLEU-4: 0.1648, best METEOR: 0.4194
+----------------------------------------
+epoch: 10
+train loss: 3.0807, train acc: 76.88%, valid loss: 3.6409, valid acc: 69.42%, best BLEU-1: 0.6567, best BLEU-2: 0.4787, best BLEU-3: 0.2713, best BLEU-4: 0.1648, best METEOR: 0.4194
+----------------------------------------
+
+
+[AlexNet]
+----------------------------------------
+epoch: 1
+train loss: 5.0282, train acc: 49.41%, valid loss: 4.4323, valid acc: 56.99%, best BLEU-1: 0.5637, best BLEU-2: 0.3487, best BLEU-3: 0.1491, best BLEU-4: 0.0735, best METEOR: 0.3064
+----------------------------------------
+epoch: 2
+train loss: 4.3188, train acc: 58.23%, valid loss: 4.1915, valid acc: 60.14%, best BLEU-1: 0.5822, best BLEU-2: 0.3669, best BLEU-3: 0.1674, best BLEU-4: 0.0863, best METEOR: 0.3294
+----------------------------------------
+epoch: 3
+train loss: 4.1025, train acc: 60.94%, valid loss: 4.0738, valid acc: 61.70%, best BLEU-1: 0.5867, best BLEU-2: 0.3785, best BLEU-3: 0.1759, best BLEU-4: 0.0930, best METEOR: 0.3362
+----------------------------------------
+epoch: 4
+train loss: 3.9672, train acc: 62.68%, valid loss: 3.9986, valid acc: 62.92%, best BLEU-1: 0.5949, best BLEU-2: 0.3857, best BLEU-3: 0.1845, best BLEU-4: 0.0992, best METEOR: 0.3441
+----------------------------------------
+epoch: 5
+train loss: 3.8660, train acc: 63.95%, valid loss: 3.9534, valid acc: 63.29%, best BLEU-1: 0.5975, best BLEU-2: 0.3889, best BLEU-3: 0.1881, best BLEU-4: 0.1015, best METEOR: 0.3499
+----------------------------------------
+epoch: 6
+train loss: 3.7853, train acc: 65.02%, valid loss: 3.9246, valid acc: 63.97%, best BLEU-1: 0.5985, best BLEU-2: 0.3948, best BLEU-3: 0.1909, best BLEU-4: 0.1030, best METEOR: 0.3544
+----------------------------------------
+epoch: 7
+train loss: 3.7143, train acc: 66.00%, valid loss: 3.9076, valid acc: 64.17%, best BLEU-1: 0.6024, best BLEU-2: 0.3986, best BLEU-3: 0.1948, best BLEU-4: 0.1065, best METEOR: 0.3563
+----------------------------------------
+epoch: 8
+train loss: 3.6536, train acc: 66.68%, valid loss: 3.8933, valid acc: 64.41%, best BLEU-1: 0.6024, best BLEU-2: 0.3986, best BLEU-3: 0.1948, best BLEU-4: 0.1065, best METEOR: 0.3563
+----------------------------------------
+epoch: 9
+train loss: 3.5983, train acc: 67.53%, valid loss: 3.8898, valid acc: 64.48%, best BLEU-1: 0.6044, best BLEU-2: 0.3986, best BLEU-3: 0.1953, best BLEU-4: 0.1065, best METEOR: 0.3583
+----------------------------------------
+epoch: 10
+train loss: 3.5453, train acc: 68.25%, valid loss: 3.8852, valid acc: 64.64%, best BLEU-1: 0.6044, best BLEU-2: 0.3990, best BLEU-3: 0.1971, best BLEU-4: 0.1081, best METEOR: 0.3589
+----------------------------------------
+
+
+[GoogLeNet]
+----------------------------------------
+epoch: 1
+train loss: 4.8971, train acc: 51.99%, valid loss: 4.2651, valid acc: 60.35%, best BLEU-1: 0.5974, best BLEU-2: 0.4040, best BLEU-3: 0.1959, best BLEU-4: 0.1057, best METEOR: 0.3459
+----------------------------------------
+epoch: 2
+train loss: 4.1390, train acc: 61.89%, valid loss: 3.9952, valid acc: 64.01%, best BLEU-1: 0.6222, best BLEU-2: 0.4321, best BLEU-3: 0.2263, best BLEU-4: 0.1289, best METEOR: 0.3718
+----------------------------------------
+epoch: 3
+train loss: 3.8803, train acc: 65.19%, valid loss: 3.8681, valid acc: 65.64%, best BLEU-1: 0.6222, best BLEU-2: 0.4365, best BLEU-3: 0.2317, best BLEU-4: 0.1319, best METEOR: 0.3837
+----------------------------------------
+epoch: 4
+train loss: 3.7126, train acc: 67.45%, valid loss: 3.7971, valid acc: 66.64%, best BLEU-1: 0.6275, best BLEU-2: 0.4409, best BLEU-3: 0.2330, best BLEU-4: 0.1321, best METEOR: 0.3877
+----------------------------------------
+epoch: 5
+train loss: 3.5838, train acc: 69.18%, valid loss: 3.7463, valid acc: 67.25%, best BLEU-1: 0.6366, best BLEU-2: 0.4505, best BLEU-3: 0.2438, best BLEU-4: 0.1409, best METEOR: 0.3951
+----------------------------------------
+epoch: 6
+train loss: 3.4729, train acc: 70.79%, valid loss: 3.7258, valid acc: 67.80%, best BLEU-1: 0.6368, best BLEU-2: 0.4516, best BLEU-3: 0.2438, best BLEU-4: 0.1409, best METEOR: 0.3977
+----------------------------------------
+epoch: 7
+train loss: 3.3814, train acc: 72.11%, valid loss: 3.7067, valid acc: 68.06%, best BLEU-1: 0.6399, best BLEU-2: 0.4570, best BLEU-3: 0.2490, best BLEU-4: 0.1446, best METEOR: 0.4035
+----------------------------------------
+epoch: 8
+train loss: 3.2974, train acc: 73.44%, valid loss: 3.6993, valid acc: 68.39%, best BLEU-1: 0.6399, best BLEU-2: 0.4585, best BLEU-3: 0.2512, best BLEU-4: 0.1477, best METEOR: 0.4045
+----------------------------------------
+epoch: 9
+train loss: 3.2190, train acc: 74.60%, valid loss: 3.6881, valid acc: 68.44%, best BLEU-1: 0.6399, best BLEU-2: 0.4585, best BLEU-3: 0.2512, best BLEU-4: 0.1477, best METEOR: 0.4045
+----------------------------------------
+epoch: 10
+train loss: 3.1491, train acc: 75.66%, valid loss: 3.6875, valid acc: 68.52%, best BLEU-1: 0.6453, best BLEU-2: 0.4587, best BLEU-3: 0.2512, best BLEU-4: 0.1477, best METEOR: 0.4045
+----------------------------------------
