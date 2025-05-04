@@ -24,7 +24,7 @@ The attention mechanism computes a context vector as a weighted sum over annotat
 \mathbb{E}_{p(s_t | a)}[\hat{z}_t] = \sum_{i=1}^{L} \alpha_{t,i} a_i
 ```
 
-Here, ``math\( \alpha\_{t,i} \)`` represents the attention weight for region ``\( i \)`` at time step ``\( t \)``, and ``\( a_i \)`` is the annotation vector for that region. This formulation allows the model to softly attend to all regions, maintaining differentiability and enabling end-to-end training via backpropagation.
+Here, $\( \alpha\_{t,i} \)$ represents the attention weight for region $ i $ at time step $ t $, and $ a_i $ is the annotation vector for that region. This formulation allows the model to softly attend to all regions, maintaining differentiability and enabling end-to-end training via backpropagation.
 
 To further simplify the learning process while preserving the benefits of attention, the paper introduces the Normalized Weighted Geometric Mean (NWGM). This approximates the marginal likelihood over attention locations during word generation:
 
