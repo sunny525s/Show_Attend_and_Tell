@@ -1,10 +1,11 @@
 data/*
 !data/captions/
+!data/train/
+!data/val/
 data/captions/*
 !data/captions/dataset.json
 
 checkpoints/
-
 
 **/__pycache__/
 **/.DS_Store
