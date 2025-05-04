@@ -4,7 +4,7 @@ from torchvision.models import vgg19
 
 class VGGEncoder(nn.Module):
     def __init__(self, output_size=14):
-        super(ImageEncoder, self).__init__()
+        super(VGGEncoder, self).__init__()
         self.output_size = output_size
 
         vgg = vgg19(pretrained=True)  # use VGG19 as pretrained model for now
