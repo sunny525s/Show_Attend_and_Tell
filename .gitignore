@@ -2,6 +2,7 @@ data/*
 !data/captions/
 !data/train/
 !data/val/
+!data/README.md
 data/captions/*
 !data/captions/dataset.json
 
