@@ -6,7 +6,7 @@ Sunny Sun, Michael Wei, Jiye Baek, Linda Hu, Tony Chen
 
 ## Introduction
 
-This GitHub repository re-implements the _Show, Attend and Tell_ paper by Xu et al. (2015), which introduced an attention-based mechanism for image captioning. The paper’s main contribution is the integration of soft and hard attention models into a convolutional neural network and LSTM framework, enabling the model to selectively focus on salient parts of an image while generating descriptive captions.
+This repository re-implements the _Show, Attend and Tell_ paper by Xu et al. (2015), which introduced an attention-based mechanism for image captioning. The paper’s main contribution is the integration of soft and hard attention models into a convolutional neural network and LSTM framework, enabling the model to selectively focus on salient parts of an image while generating descriptive captions.
 
 ## Chosen Result
 
@@ -24,7 +24,7 @@ The attention mechanism computes a context vector as a weighted sum over annotat
 \mathbb{E}_{p(s_t | a)}[\hat{z}_t] = \sum_{i=1}^{L} \alpha_{t,i} a_i
 ```
 
-Here, $\( \alpha\_{t,i} \)$ represents the attention weight for region $ i $ at time step $ t $, and $ a_i $ is the annotation vector for that region. This formulation allows the model to softly attend to all regions, maintaining differentiability and enabling end-to-end training via backpropagation.
+Here, $\( \alpha\_{t,i} \)$ represents the attention weight for region $i$ at time step $t$, and $a_i$ is the annotation vector for that region. This formulation allows the model to softly attend to all regions, maintaining differentiability and enabling end-to-end training via backpropagation.
 
 To further simplify the learning process while preserving the benefits of attention, the paper introduces the Normalized Weighted Geometric Mean (NWGM). This approximates the marginal likelihood over attention locations during word generation:
 
@@ -34,14 +34,14 @@ NWGM[p(y_t = k \mid a)] = \frac{\exp(\mathbb{E}_{p(s_t | a)}[n_{t,k}])}{\sum_j \
 
 This deterministic expectation replaces sampling with a smooth approximation, reducing variance in gradient estimation and making training more stable.
 
-Together, these mechanisms—the soft attention context computation and the NWGM formulation-enable the model to generate fluent, relevant captions that are grounded in specific parts of the image.
+Together, these mechanisms—the soft attention context computation and the NWGM formulation—enable the model to generate fluent, relevant captions that are grounded in specific parts of the image.
 
 ## GitHub Contents
 
 This repository is organized into the following key directories:
 
 - `code/`: Contains the re-implementation of the _Show, Attend and Tell_ soft-attention model, including training and evaluation scripts.
-- `data/`: Includes the human-annotated captions for each image in the Flickr8k dataset.
+- `data/`: Includes the human-annotated captions for each image in the Flickr8k dataset along with instructions for obtaining the training/validation splits.
 - `results/`: Stores outputs from our experiments, such as evaluation scores, attention visualizations, and generated captions.
 - `poster/`: Contains the final presentation poster in PDF format.
 - `report/`: Includes the final written report submitted for the course.
