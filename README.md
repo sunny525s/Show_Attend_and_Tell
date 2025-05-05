@@ -147,8 +147,8 @@ Replacing the original encoder with newer architectures such as DenseNet, VGG, R
 
 However, it is important to note that our implementation uses frozen, pretrained encoders, whereas the original paper fine-tuned its encoder during training. This difference likely accounts for the slightly higher BLEU and METEOR scores reported in the original work.
 
-![Models Performance Over Epochs](results/accuracy-results.png)
-**Figure 2:** Model Performance over Epochs for ResNet, AlexNet, and DenseNet
+<img src="results/accuracy-results.png" alt="Models Performance Over Epochs" width="500"/><br>
+<strong>Figure 2:</strong> Model Performance over Epochs for ResNet, AlexNet, and DenseNet
 
 As illustrated in Figure 2, we also observed that validation accuracy plateaued after approximately 5 epochs for all pretrained models, indicating early convergence and suggesting that fine-tuning may not be necessary when using strong pretrained feature extractors.
 
@@ -156,13 +156,13 @@ Finally, due to stochastic processes such as dataset shuffling during training, 
 
 To further illustrate how the soft attention mechanism functions in practice, we include several qualitative examples below, where attention maps are overlaid on the input images for specific words in the generated captions.
 
-![Boy Holding Basketball](results/example-boy.png)  
-**Figure 3:** Attention mechanism focused on the word _"basketball"_ in the input image.
+<img src="results/example-boy.png" alt="Boy Holding Basketball" width="300"/><br>
+<strong>Figure 3:</strong> Attention mechanism focused on the word <em>"basketball"</em> in the input image.
 
 In this example, the model generates the caption: "_the boy is holding a [basketball]_". When attending to the word "_basketball_", the model successfully concentrates its attention on the ball being held by the boy. The attention map demonstrates the spatial interpretability of the soft attention mechanism—it helps explain how the model grounds specific words in relevant visual regions, thereby producing a semantically meaningful caption.
 
-![Dog Running in Grass](results/example-dog.png)  
-**Figure 4:** Attention mechanism focused on the word _"dog"_ in the input image.
+<img src="results/example-dog.png" alt="Dog Running in Grass" width="300"/><br>
+<strong>Figure 4:</strong> Attention mechanism focused on the word <em>"dog"</em> in the input image.
 
 This caption reads: "_a [dog] is running through the grass_". Here, the attention map is sharply focused on the dog’s body, indicating that the model is correctly attending to the object associated with the word "_dog_". This localized focus further reinforces the model's ability to align linguistic elements with corresponding visual cues, especially for prominent foreground subjects.
 
