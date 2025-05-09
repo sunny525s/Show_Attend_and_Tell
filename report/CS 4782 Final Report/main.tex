@@ -17,6 +17,7 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{adjustbox}
+\usepackage{indentfirst}
 \graphicspath{ {./images/} }
 
 % Grading
@@ -28,6 +29,7 @@
 \font\myfont=cmr12 at 15pt
 \title{\vspace{0cm}\myfont CS 4782 Final Report}
 \author{Sunny Sun, Michael Wei, Tony Chen, Linda Hu, Jiye Baek}
+\date{May 2025}
 
 \begin{document}
 
@@ -51,16 +53,16 @@ Although prior image-captioning networks existed at the time this paper was writ
 
 Besides implementing the underlying infrastructure of the model outlined in the paper, we aimed to reproduce two main results:
 
-\textbf{Visualization of soft attention} at each timestep of a generated caption. The original paper has several examples of the change in attention over time to reflect the relevant parts of the image. We chose this visualization to understand the attention mechanism used by the model and gain intuition into what the model saw.
+Visualization of soft attention at each timestep of a generated caption. The original paper has several examples of the change in attention over time to reflect the relevant parts of the image. We chose this visualization to understand the attention mechanism used by the model and gain intuition into what the model saw.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\linewidth]{chosen-results.png}
-    \caption{Visual examples of soft attention from the original paper}
+    \caption{Visual examples of soft attention from the original paper, [6]}
     \label{fig:results}
 \end{figure}
 
-\textbf{BLEU and METEOR scores} reported for the soft attention model on the Flickr8k dataset. These are common metrics used in natural language processing that quantitatively evaluate the quality of generated captions against human understanding. We chose these results to provide a concrete standard from which we can measure the accuracy of our model.
+BLEU and METEOR scores reported for the soft attention model on the Flickr8k dataset. These are common metrics used in natural language processing that quantitatively evaluate the quality of generated captions against human understanding. We chose these results to provide a concrete standard from which we can measure the accuracy of our model.
 
 
 \section{Methodology}
@@ -91,6 +93,8 @@ In terms of BLEU and METEOR scores, our re-implementation achieved slightly lowe
 
 \begin{table}[h]
 \centering
+\caption{Comparison of models on BLEU and METEOR scores.}
+\label{tab:mytable}
 \begin{adjustbox}{width=.75\textwidth}
 \small
 \begin{tabular}{lccccc}
@@ -117,7 +121,9 @@ In terms of visualization and qualitative performance, we fed several random ima
     \label{fig:enter-label}
 \end{figure}
 
-One challenge that we faced in the re-implementation process was long training times and timing out on compute while using a T4 GPU on Google Colab. On average, training 10 epochs would take almost two hours. We partially resolved these problems by optimizing the decoder of the model. We also implemented saving model checkpoints at every epoch so we could break up training time over multiple sessions.
+One challenge that we faced in the re-implementation process was long training times and timing out on compute while using a T4 GPU on Google Colab. On average, training only 10 epochs would take almost two hours. We partially resolved these problems by optimizing the decoder of the model. We also implemented saving model checkpoints at every epoch so we could break up training time over multiple sessions. Ultimately, we trained our model with soft attention for 10-20 epochs at least 5 times, one for each encoder plus dry runs.
+
+On the note of long training times, another challenge that we faced was implementing and training both hard and soft attention. Based on hard attention's non-differentiability and lower training stability and thus greater time to converge, we decided to first pursue implementing soft attention and then hard attention. However, after we finished training for soft attention, we felt that it would be a bit too ambitious and time consuming to do the same for hard attention, so we decided to abandon the attempt.
 
 \section{Reflections}
 
@@ -135,13 +141,23 @@ Overall, this project deepened our understanding of attention mechanisms in imag
 \section{References}
 
 % Include full citations for the original paper and any tools, datasets, or frameworks used.
-[TODO DO WE NEED TO CREDIT MORE TOOLS ??]
-\begin{itemize}
-    \item Xu, K., Ba, J., Kiros, R., Cho, K., Courville, A., Salakhutdinov, R., Zemel, R., \& Bengio, Y. (2015). Show, Attend and Tell: Neural Image Caption Generation with Visual Attention. Paper Website. \\ https://kelvinxu.github.io/projects/capgen.html
-    \item Xu, K. Arctic Captions: Theano Implementation of Show, Attend and Tell. GitHub repository. https://github.com/kelvinxu/arctic-captions 
-    \item Wong, A.. Show, Attend and Tell: PyTorch Implementation. GitHub repository. \\ https://github.com/AaronCCWong/Show-Attend-and-Tell
-    \item Hodosh, M., Young, P., \& Hockenmaier, J. (2013). Framing Image Description as a Ranking Task: Data, Models and Evaluation Metrics. Journal of Artificial Intelligence Research, 47, 853–899.\\ https://doi.org/10.1613/jair.3994
-    \item Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., ... \& Chintala, S. (2019). PyTorch: An Imperative Style, High-Performance Deep Learning Library. Advances in Neural Information Processing Systems, 32. \\ https://arxiv.org/pdf/1912.01703
-\end{itemize}
+\noindent
+[1] Xu, K., Ba, J., Kiros, R., Cho, K., Courville, A., Salakhutdinov, R., Zemel, R., \& Bengio, Y. (2015). Show, Attend and Tell: Neural Image Caption Generation with Visual Attention. Paper Website. \\ https://kelvinxu.github.io/projects/capgen.html\\
+
+\noindent
+[2] Xu, K. Arctic Captions: Theano Implementation of Show, Attend and Tell. GitHub repository. https://github.com/kelvinxu/arctic-captions\\
+
+\noindent
+[3] Wong, A.. Show, Attend and Tell: PyTorch Implementation. GitHub repository. \\ https://github.com/AaronCCWong/Show-Attend-and-Tell\\
+
+\noindent
+[4] Hodosh, M., Young, P., \& Hockenmaier, J. (2013). Framing Image Description as a Ranking Task: Data, Models and Evaluation Metrics. Journal of Artificial Intelligence Research, 47, 853–899.\\ https://doi.org/10.1613/jair.3994\\
+
+\noindent
+[5] Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., ... \& Chintala, S. (2019). PyTorch: An Imperative Style, High-Performance Deep Learning Library. Advances in Neural Information Processing Systems, 32. \\ https://arxiv.org/pdf/1912.01703\\
+
+\noindent
+[6] Xu, K., Ba, J., Kiros, R., Cho, K., Courville, A., Salakhutdinov, R., Zemel, R., \& Bengio, Y. (2015). Show, Attend and Tell: Neural Image Caption Generation with Visual Attention. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2015.
+https://arxiv.org/abs/1502.03044
 
 \end{document}
