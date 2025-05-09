@@ -51,7 +51,7 @@ Although prior image-captioning networks existed at the time this paper was writ
 
 Besides implementing the underlying infrastructure of the model outlined in the paper, we aimed to reproduce two main results:
 
-\textbf{Visualization of soft attention} at each timestep of a generated caption. The original paper has several examples of the change in attention over time to reflect the relevant parts of the image. We felt that this visualization was rather significant in understanding the attention mechanism used by the model and to gain intuition into what the model saw.
+\textbf{Visualization of soft attention} at each timestep of a generated caption. The original paper has several examples of the change in attention over time to reflect the relevant parts of the image. We chose this visualization to understand the attention mechanism used by the model and gain intuition into what the model saw.
 
 \begin{figure}[h]
     \centering
@@ -60,7 +60,7 @@ Besides implementing the underlying infrastructure of the model outlined in the 
     \label{fig:results}
 \end{figure}
 
-\textbf{BLEU and METEOR scores} reported for the soft attention model on the Flickr8k dataset. These are common metrics used in natural language processing that quantitatively evaluate the quality of generated captions against human understanding. We felt that these results from the paper were significant in providing a concrete standard from which we can measure the accuracy of our model.
+\textbf{BLEU and METEOR scores} reported for the soft attention model on the Flickr8k dataset. These are common metrics used in natural language processing that quantitatively evaluate the quality of generated captions against human understanding. We chose these results to provide a concrete standard from which we can measure the accuracy of our model.
 
 
 \section{Methodology}
@@ -76,7 +76,7 @@ The attention model calculates the weights for each annotation vector. These are
 
 In the LSTM decoder, we initialized the memory state and hidden states by taking the average of the annotation vectors fed through 2 MLPs. The context vector, previous word, and previous hidden state are fed into LSTM decoder at every word predicted in the caption.
 
-The original paper trained the soft attention model on MS COCO for 3 days on an NVIDIA Titan Black GPU. Due to time and memory constraints, we only trained our re-implemented model on the Flickr8k dataset alone, avoiding Flickr30k and MS COCO in the paper. The smaller dataset also allowed us to maintain fast experimentation cycles and train our model in around 2 hours. We used the train, val, test labels in the dataset to split our data. This gave us 6000 images for the training set and 1000 images each for the validation and test set. In the dataset, there are 5 human annotated captions per image. To evaluate our caption quality, we used BLEU and METEOR scores to calculate the training and validation accuracy. We calculated these scores for soft attention alone, but across all 5 pretrained CNN encoders.
+The original paper trained the soft attention model on MS COCO for 3 days on an NVIDIA Titan Black GPU. We trained our re-implemented model over 20 epochs using Adam optimizer with a learning rate of 0.0001 and a batch size of 32. Due to time and memory constraints, we only trained our model on the Flickr8k dataset alone, avoiding Flickr30k and MS COCO in the paper. The smaller dataset also allowed us to maintain fast experimentation cycles and train our model in around 2 hours. We used the train, val, test labels in the dataset to split our data. This gave us 6000 images for the training set and 1000 images each for the validation and test set. In the dataset, there are 5 human annotated captions per image. To evaluate our caption quality, we used BLEU and METEOR scores to calculate the training and validation accuracy. We calculated these scores for soft attention alone, but across all 5 pretrained CNN encoders.
 
 % Describe your re-implementation approach, including the model architecture, datasets, evaluation metrics, and any modifications made to the original methodology.
 
@@ -87,7 +87,7 @@ The original paper trained the soft attention model on MS COCO for 3 days on an 
 % Provide an analysis of your results in the context of the paper’s main contribution(s) and the broader research area.
 % Note: We are looking for a reasonable re-implementation of the method and a clear discussion of your results. A failure to match the reported results could happen for any number of reasons that would not negatively impact your grade. It is acceptable, for instance, to run smaller-scale experiments if you initially under-estimated the required resources for your selected result. It’s also possible that the authors left out some detail that is necessary to match their performance.
 
-In terms of BLEU and METEOR scores, our re-implementation achieved slightly lower compared to the original paper's soft attention scores for the Flickr8k dataset. We also trained the model with various frozen, pre-trained encoders and found that ResNet performed the best. However, in the original paper, the model fine-tuned its encoders during training. We believe that this may account for the discrepancy between our model's and the original paper's BLEU and METEOR scores. The scores of our models and the original paper are shown in the table below.
+In terms of BLEU and METEOR scores, our re-implementation achieved slightly lower compared to the original paper's soft attention scores for the Flickr8k dataset. We also trained the model with various frozen, pre-trained encoders and found that ResNet performed the best. However, in the original paper, the model fine-tuned its encoders during training, which may account for the discrepancy between our model's and the original paper's BLEU and METEOR scores. The scores of our models and the original paper are shown in the table below.
 
 \begin{table}[h]
 \centering
@@ -125,7 +125,7 @@ One challenge that we faced in the re-implementation process was long training t
 % Summarize the key takeaways from your re-implementation effort and the lessons learned.
 % Discuss potential future directions or extensions based on your findings and the paper’s implications.
 
-Our re-implementation demonstrated meaningful results given limited resources. Despite only training on the smaller Flickr8k dataset and using frozen pre-trained CNN encoders, our model was still able to generate reasonable captions and produce interpretable attention maps. This highlights the effectiveness of the soft attention mechanism, even under constraints.
+Our re-implementation demonstrated meaningful results given limited resources. Despite only training on the smaller Flickr8k dataset and using frozen pre-trained CNN encoders, our model generated reasonable captions and produced interpretable attention maps. This highlights the effectiveness of the soft attention mechanism, even under constraints.
 
 One of the key lessons we learned was the importance of feasibility given time constraints and tight resources. Although the original paper explored both hard and soft attention mechanisms, we found that soft attention was significantly more practical to implement and train due to its differentiable and deterministic nature. Implementing the hard attention, especially the required reinforcement learning techniques like REINFORCE, from scratch was more time consuming than anticipated.
 
@@ -137,11 +137,11 @@ Overall, this project deepened our understanding of attention mechanisms in imag
 % Include full citations for the original paper and any tools, datasets, or frameworks used.
 [TODO DO WE NEED TO CREDIT MORE TOOLS ??]
 \begin{itemize}
-    \item Kelvin Xu, Jimmy Ba, Ryan Kiros, Kyunghyun Cho, Aaron Courville, Ruslan Salakhutdinov, Rich Zemel, and Yoshua Bengio. Show, Attend and Tell: Neural Image Caption Generation with Visual Attention. 2015. Paper Website
-    \item Kelvin Xu. Arctic Captions: Theano Implementation of Show, Attend and Tell. GitHub repository. https://github.com/kelvinxu/arctic-captions 
-    \item Aaron C.C. Wong. Show, Attend and Tell: PyTorch Implementation. GitHub repository. \\ https://github.com/AaronCCWong/Show-Attend-and-Tell
+    \item Xu, K., Ba, J., Kiros, R., Cho, K., Courville, A., Salakhutdinov, R., Zemel, R., \& Bengio, Y. (2015). Show, Attend and Tell: Neural Image Caption Generation with Visual Attention. Paper Website. \\ https://kelvinxu.github.io/projects/capgen.html
+    \item Xu, K. Arctic Captions: Theano Implementation of Show, Attend and Tell. GitHub repository. https://github.com/kelvinxu/arctic-captions 
+    \item Wong, A.. Show, Attend and Tell: PyTorch Implementation. GitHub repository. \\ https://github.com/AaronCCWong/Show-Attend-and-Tell
     \item Hodosh, M., Young, P., \& Hockenmaier, J. (2013). Framing Image Description as a Ranking Task: Data, Models and Evaluation Metrics. Journal of Artificial Intelligence Research, 47, 853–899.\\ https://doi.org/10.1613/jair.3994
-    \item Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., ... \& Chintala, S. (2019). PyTorch: An Imperative Style, High-Performance Deep Learning Library. In Advances in Neural Information Processing Systems (NeurIPS 2019), 32.
+    \item Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., ... \& Chintala, S. (2019). PyTorch: An Imperative Style, High-Performance Deep Learning Library. Advances in Neural Information Processing Systems, 32. \\ https://arxiv.org/pdf/1912.01703
 \end{itemize}
 
 \end{document}
