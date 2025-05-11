@@ -23,16 +23,17 @@
 
 \setlength{\droptitle}{-6em}  
 
-% \font\myfont=cmr11 at 14pt
-\title{CS 4782 Final Project Report}
-\author{Sunny Sun, Michael Wei, Tony Chen, Linda Hu, Jiye Baek}
-\date{May 2025}
+\title{Show, Attend and Tell: Neural Image Caption Generation with Visual Attention}
+\author{Sunny Sun, Michael Wei, Tony Chen, Linda Hu, Jiye Baek \\
+  \href{https://github.com/sunny525s/Show_Attend_and_Tell}
+    {\texttt{github.com/sunny525s/Show\_Attend\_and\_Tell}}}
+\date{}
 
 \begin{document}
 
 \maketitle
 
-\vspace{-3em}
+\vspace{-5em}
 \section{Introduction}
 
 Image captioning presents the challenge of translating visual content into coherent natural language, requiring not only object recognition but also an understanding of spatial relationships and context. In this project, we re-implemented \textit{Show, Attend, and Tell} (Xu et al., 2016), which introduced a novel attention-based model for image captioning.
@@ -55,7 +56,7 @@ First, we visualized the soft attention mechanism over each word in the sentence
 \end{figure}
 Second, we replicated the BLEU and METEOR scores reported for the Flickr8k dataset under the soft attention model, aligning with Table 1 in the original paper. These metrics provide a quantitative measure of caption quality and serve as a benchmark for validating the fidelity of our re-implementation. 
 
-Both results are central to the paper’s contributions, as they empirically validate attention as a mechanism for both improved performance and visual interpretability, which act as key advantages over prior image captioning models.
+All results are central to the paper’s contributions, as they empirically validate attention as a mechanism for improved performance and visual interpretability, which act as key advantages over prior image captioning models.
 
 \section{Methodology}
 
