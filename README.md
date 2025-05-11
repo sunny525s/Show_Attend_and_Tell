@@ -127,6 +127,13 @@ The Flickr8k dataset, being relatively small, helped us maintain fast experiment
      ```bash
      python code/inference.py --image_path data/667626_18933d713e.jpg
      ```
+7. **Google Colab:**
+
+   To run the notebook in Google Colab:
+   - Download the Show_Attend_and_Tell.ipynb file from the code folder.
+   - Upload the notebook to your Google Drive.
+   - Right-click the file in Drive and select “Open with → Google Colab.”
+   - Run the code cells sequentially to execute the notebook.
 
 ## Results and Insights
 
