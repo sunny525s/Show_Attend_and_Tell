@@ -7,7 +7,7 @@
 \usepackage[colorlinks,allcolors=RoyalBlue]{hyperref}
 \usepackage{enumitem}
 \usepackage{graphicx} % Required for inserting images
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.8in]{geometry}
 \usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{tikz}
@@ -19,15 +19,12 @@
 \usepackage{adjustbox}
 \usepackage{indentfirst}
 \graphicspath{ {./images/} }
+\usepackage{titling}
 
-% Grading
-% There is not a specific grading rubric for the project report. However, we will look for the following factors:
-% How much thought and consideration did you put into the problem setting? Is the problem setting sufficiently challenging or interesting to explore?
-% How much thought and consideration did you put into your approach? Did you correctly identify the previous approaches and their limitations? Did you attempt to address theses limitations through your work? Did you note key obstacles in implementing your approach? Even if your results were not successful, did you try enough things and reflect on why they did not work? What would you have done differently given more time and resources?
-% How much thought and consideration did you put into your investigation? Did you use reasonable performance metrics? Did you provide insight and visualize key aspects of your approach (using tables, figures, toy examples)? For any theoretical components of the project, have you identified the crucial assumptions and limitations?
+\setlength{\droptitle}{-6em}  
 
-\font\myfont=cmr12 at 15pt
-\title{\vspace{0cm}\myfont CS 4782 Final Report}
+% \font\myfont=cmr11 at 14pt
+\title{CS 4782 Final Project Report}
 \author{Sunny Sun, Michael Wei, Tony Chen, Linda Hu, Jiye Baek}
 \date{May 2025}
 
@@ -35,61 +32,52 @@
 
 \maketitle
 
+\vspace{-3em}
 \section{Introduction}
 
-% State the problem and motivation.
-% Include the title and authors of the paper (if reproducing one).
-% Summarize the primary method and contributions of the paper.
+Image captioning presents the challenge of translating visual content into coherent natural language, requiring not only object recognition but also an understanding of spatial relationships and context. In this project, we re-implemented \textit{Show, Attend, and Tell} (Xu et al., 2016), which introduced a novel attention-based model for image captioning.
 
-Image captioning poses the unique challenge of translating visual information into coherent natural language -- a task that requires understanding both what is in an image and how those elements relate to one another. In this project, we aimed to reproduce the image captioning results of the paper \textit{Show, Attend, and Tell} published in 2016 by Kelvin Xu \textit{et al}. This paper utilizes the then novel technology of attention to create more accurate and efficient methods of automatic caption generation of a given input image. This paper was motivated by the computer vision problem of determining not only what objects exist within an image, but also accurately describing the relationships between them in a natural language.
+Unlike earlier models that relied on static global image features, which often missed fine-grained spatial relationships, this paper proposed using visual attention to dynamically focus on salient image regions while generating each word in a caption. This mechanism allows the model to align specific words with relevant parts of the image, enabling more contextually grounded and interpretable captions.
 
-Although prior image-captioning networks existed at the time this paper was written, most used static global image features which often miss fine-grained spatial relationships crucial for accurate captioning. This paper's main contributions include introducing two attention-based image caption generators under a common framework, visualizing the results of this framework by outputting alpha masks that depict the area of an image that the attention focused on, and quantitatively validating the usefulness of attention in caption generation using standard metrics of BLEU and METEOR scores. Overall, this paper addressed issues of spatial relationships and focus on specific regions of interest for complex scenes and multiple objects. It is able to output interpretable attention maps and improve caption accuracy and fluency by grounding words in localized visual evidence.
+The paper’s main contributions include: two attention-based captioning architectures (soft and hard attention) under a unified framework, visualizations of learned attention masks to interpret model behavior by outputting alpha masks that depict the area of an image that the attention focused on, and empirical validation through improved BLEU and METEOR scores on benchmark datasets. By addressing the limitations of prior models in capturing fine-grained spatial detail and spatial relationships, the paper laid foundational work for interpretable, high-quality image captioning by focusing on on specific regions of interest for complex scenes with multiple objects.
 
 \section{Chosen Result}
+We focused on reproducing two key results from the original paper, both of which directly support its core contributions of model interpretability and captioning performance.
 
-% Identify the specific result you aimed to reproduce and its significance in the context of the paper’s main contribution(s).
-% Include the relevant figure, table, or equation reference from the original paper.
-% State why it was chosen and its importance in the context of the paper or your goals.
-
-Besides implementing the underlying infrastructure of the model outlined in the paper, we aimed to reproduce two main results:
-
-Visualization of soft attention at each timestep of a generated caption. The original paper has several examples of the change in attention over time to reflect the relevant parts of the image. We chose this visualization to understand the attention mechanism used by the model and gain intuition into what the model saw.
+First, we visualized the soft attention mechanism over each word in the sentence, illustrating how the model attends to different regions of the image as each word is generated. As shown in Figure 1 of our report, corresponding to Figure 3 in the original paper, our model successfully identifies semantically relevant image regions with generated words, such as focusing on the basketball during “basketball” and on the dog during “dog.” We chose this result for its interpretability and the qualitative demonstration it provides into how the model links language to visual features.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\linewidth]{chosen-results.png}
-    \caption{Visual examples of soft attention from the original paper, [6]}
+    \includegraphics[width=0.35\linewidth]{example-boy.png}
+    \includegraphics[width=0.4\linewidth]{example-dog.png}
+    \caption{Soft attention from our re-implemented model [6]}
     \label{fig:results}
 \end{figure}
+Second, we replicated the BLEU and METEOR scores reported for the Flickr8k dataset under the soft attention model, aligning with Table 1 in the original paper. These metrics provide a quantitative measure of caption quality and serve as a benchmark for validating the fidelity of our re-implementation. 
 
-BLEU and METEOR scores reported for the soft attention model on the Flickr8k dataset. These are common metrics used in natural language processing that quantitatively evaluate the quality of generated captions against human understanding. We chose these results to provide a concrete standard from which we can measure the accuracy of our model.
-
+Both results are central to the paper’s contributions, as they empirically validate attention as a mechanism for both improved performance and visual interpretability, which act as key advantages over prior image captioning models.
 
 \section{Methodology}
+
+Our re-implementation of the \textit{Show, Attend, and Tell} architecture was developed in modern PyTorch with CUDA acceleration for parallelized execution on NVIDIA GPUs. In our case, we used a Tesla T4, though any CUDA-compatible GPU is compatible. The system was modularly designed to support interchangeable CNN encoders and rapid prototyping of captioning components. While preserving the original model’s attention and decoder mechanisms, we adapted our training methodology to accommodate limited computational resources and enable reproducible experimentation with newer CNN architectures.
+
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.2]{methodology.png}
     \caption{Overall Model Architecture}
     \
 \end{figure}
-The model takes in a single raw image and passes it through a convolution neural network (CNN) encoder such as VGG, ResNet, or DenseNet to extract spatial image features in annotation vectors. Instead of training from scratch, we used frozen, pre-trained CNNs encoders to experiment with newer architectures and save compute. We used the encoders from the original paper --- VGG, GoogLeNet, and AlexNet --- for consistency and baseline comparison. To evaluate the impact of more recent architectures, we also included ResNet and DenseNet, which were introduced after the paper was published. ResNet, with its skip connections, addresses the vanishing gradient problem and enables stable training of deeper networks. DenseNet uses dense connections to promote feature reuse and improve generalization. These design improvements allow both models to capture complex patterns, which likely contributed to their stronger performance, even on our smaller dataset.
+The model processes a single raw \textbf{input image} through a frozen, pre-trained CNN encoder, such as VGG, GoogLeNet, AlexNet, ResNet, or DenseNet, for \textbf{convolutional feature extraction}, where spatial features were extracted as annotation vectors. Including the original encoders from the paper (AlexNet, GoogleNet, VGG) ensured baseline comparability, while ResNet and DenseNet enabled evaluation of more recent architectures. ResNet mitigates the vanishing gradient problem via skip connections, supporting stable optimization in deeper architectures, while DenseNet promotes feature reuse and generalization through dense connectivity. These architectural modifications likely contributed to improved visual representation, even on our relatively small dataset.
 
-The attention model calculates the weights for each annotation vector. These are used in attention mechanism to generate a context vector, indicating where in the image the model attends to at that timestamp. The paper uses two types of attention: hard and soft attention. Soft attention calculates the expected value of all annotation vectors using the softmax of the weights, whereas hard attention uses the weights for each annotation vector to create a multinoulli distribution which is then sampled. Then, hard attention samples from each location of the image as one-hot variable--1 if the i-th location of the image is used to extract visual features, else 0. Thus, the context vector in the hard attention implementation is a multinoulli distribution. We ultimately chose to omit the implementation of hard attention due to its reliance on reinforcement learning, which introduces additional complexity and instability during training. 
+The attention mechanism, implemented as part of the \textbf{RNN with Attention} module in Figure 2, assigns weights to annotation vectors to compute a context vector at each timestep. The paper proposed two variants: soft attention, which applies a softmax to produce a weighted sum, and hard attention, which samples a one-hot vector from a multinoulli distribution. The resulting context vector in hard attention reflects a sampled annotation location. Unlike soft attention, hard attention is non-differentiable and requires reinforcement learning for training. We chose not to implement it due to this reliance, which introduces additional complexity and potential instability during optimization.
+ 
+In the LSTM decoder, initial memory and hidden states are computed by averaging the annotation vectors and passing them through two multilayer perceptrons. At each timestep, the decoder receives the context vector, previous word, and previous hidden state to generate the next word during the \textbf{word generation} step.
 
-In the LSTM decoder, we initialized the memory state and hidden states by taking the average of the annotation vectors fed through 2 MLPs. The context vector, previous word, and previous hidden state are fed into LSTM decoder at every word predicted in the caption.
-
-The original paper trained the soft attention model on MS COCO for 3 days on an NVIDIA Titan Black GPU. We trained our re-implemented model over 20 epochs using Adam optimizer with a learning rate of 0.0001 and a batch size of 32. Due to time and memory constraints, we only trained our model on the Flickr8k dataset alone, avoiding Flickr30k and MS COCO in the paper. The smaller dataset also allowed us to maintain fast experimentation cycles and train our model in around 2 hours. We used the train, val, test labels in the dataset to split our data. This gave us 6000 images for the training set and 1000 images each for the validation and test set. In the dataset, there are 5 human annotated captions per image. To evaluate our caption quality, we used BLEU and METEOR scores to calculate the training and validation accuracy. We calculated these scores for soft attention alone, but across all 5 pretrained CNN encoders.
-
-% Describe your re-implementation approach, including the model architecture, datasets, evaluation metrics, and any modifications made to the original methodology.
+Unlike the original implementation trained on MS COCO for three days using a Titan Black GPU, we trained our soft attention model for 20 epochs using the Adam optimizer (learning rate 0.0001, batch size 32) on the smaller Flickr8k dataset. This choice reduced training time to around 2 hours, allowing for rapid experimentation. We used the dataset’s provided splits (6,000 images for training and 1,000 images each for validation and testing, with five human-annotated captions per image). Caption quality was evaluated using BLEU and METEOR scores on both training and validation sets across all five CNN encoders.
 
 \section{Results and Analysis}
-
-% Present your re-implementation results and compare them to the original paper’s findings. 
-% Discuss any discrepancies or challenges encountered during the re-implementation process.
-% Provide an analysis of your results in the context of the paper’s main contribution(s) and the broader research area.
-% Note: We are looking for a reasonable re-implementation of the method and a clear discussion of your results. A failure to match the reported results could happen for any number of reasons that would not negatively impact your grade. It is acceptable, for instance, to run smaller-scale experiments if you initially under-estimated the required resources for your selected result. It’s also possible that the authors left out some detail that is necessary to match their performance.
-
-In terms of BLEU and METEOR scores, our re-implementation achieved slightly lower compared to the original paper's soft attention scores for the Flickr8k dataset. We also trained the model with various frozen, pre-trained encoders and found that ResNet performed the best and significantly better than AlexNet, especially in terms of BLEU-3 score. As predicted above, ResNet and DenseNet performed the best out of the 5 pre-trained encoders we tested and outputted scores closest to the original paper's performance, being no more than 4\% less than any of the original paper's BLEU or METEOR scores. We attribute their high performance to the residual connections which ameliorates the vanishing gradient problem and allows for deeper networks. To account for the discrepancy between our re-implementation and the original paper's performance, we suspect that because the original paper fine-tuned its encoders during training, but our re-implementation used pre-trained, frozen networks. Thus, our encoders do not output representations specific to the task of image captioning as the original paper's encoder does. The scores of our models and the original paper are shown in the table below.
+Our re-implementation achieved slightly lower BLEU and METEOR scores compared to the original soft attention model reported in Show, Attend and Tell for the Flickr8k dataset. We tested five frozen, pre-trained CNN encoders (AlexNet, GoogLeNet, VGG, ResNet, and DenseNet) and found that ResNet consistently performed the best, with BLEU-3 and METEOR scores closest to those in the original paper. As expected, ResNet and DenseNet outperformed older architectures like AlexNet, due to their deeper structure and design enhancements (e.g., residual and dense connections), which help preserve spatial features and mitigate vanishing gradients.
+The performance gap between our best models and the original results was typically within 4\% across BLEU and METEOR scores. We attribute this to two primary factors: (1) the original paper fine-tuned its encoder during training, while our implementation used frozen pre-trained weights, and (2) we trained only on Flickr8k, a smaller dataset, to accommodate compute constraints. Frozen encoders, while computationally efficient, likely limited the model’s ability to learn image representations tailored specifically for captioning. The scores of our models and the original paper are shown in the table below.
 
 \begin{table}[h]
 \centering
@@ -103,49 +91,42 @@ Model & BLEU-1 & BLEU-2 & BLEU-3 & BLEU-4 & METEOR \\
 \midrule
 Soft-Attention (Original Paper) & 67.0 & 44.8 & 29.9 & 19.5 & 18.93 \\
 AlexNet                & 60.44 & 34.90 & 19.71 & 10.81 & 12.89 \\
-DenseNet               & 64.81 & 40.82 & 26.26 & 15.84 & 16.95 \\
-GoogLeNet              & 64.53 & 40.13 & 25.12 & 14.77 & 16.45 \\
-VGG                    & 64.79 & 40.37 & 25.88 & 15.48 & 17.08 \\
-ResNet                 & \textbf{65.67} & \textbf{41.40} & \textbf{27.13} & \textbf{16.48} & \textbf{17.94} \\
+DenseNet-201               & 64.81 & 40.82 & 26.26 & 15.84 & 16.95 \\
+GoogLeNet (Inception-v1)              & 64.53 & 40.13 & 25.12 & 14.77 & 16.45 \\
+VGG-19                    & 64.79 & 40.37 & 25.88 & 15.48 & 17.08 \\
+ResNet-152                 & \textbf{65.67} & \textbf{41.40} & \textbf{27.13} & \textbf{16.48} & \textbf{17.94} \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 \end{table}
 
-In terms of visualization and qualitative performance, we fed several random images to our model and obtained captions and attention maps after training. Figure 3 demonstrates an example of one such caption and set of attention maps. We observe in the second and third image, the attention maps properly highlight the "red" of the jeep and the "jeep" itself, demonstrating its strength in localization. Additionally, we can see in words such as "is" and "driving" that the model is able to attend to salient regions for words that are non-object. Most importantly, for the word "on", the model strongly highlights the rocky road around the jeep, illustrating its ability to capture the fine-grained relationship between objects in the image--a significant solution to prior image-captioning models. Overall, the model learns alignments that correspond pretty strongly to human intuition, similar to the original paper's findings. Based on the generated attention masks, we would claim that our re-implemented model is capable of building a coherent visual-linguistic representation, grounding each word in relevant spatial context. 
+In terms of qualitative performance, our model generated interpretable attention maps that closely aligned with the content and structure of the generated captions. As shown in Figure 3, the attention heatmaps track semantically relevant regions across time steps. For example, the model correctly focused on the "red" and "jeep" in corresponding image regions, and attended to background features such as the "rocky road" for relational terms like "on" which illustrated its ability to capture the fine-grained relationship between objects in the image, Notably, the model also allocated attention to non-object words such as “is” and “driving”, suggesting that it captures both objects and contextual relations. Overall, the model successfully learned to associate spatial features with linguistic outputs, reproducing one of the core strengths of the original approach. Based on the generated attention masks, our re-implemented model is capable of building a coherent visual-linguistic representation, grounding each word in relevant spatial context. 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{example-jeep.png}
-    \caption{Example of our model's attention mechanism visualization per word in generated caption.}
+    \caption{Our model's attention mechanism visualization per word in generated caption.}
     \label{fig:enter-label}
 \end{figure}
 
-One challenge that we faced in the re-implementation process was long training times and timing out on compute while using a T4 GPU on Google Colab. On average, training only 10 epochs would take almost two hours. We partially resolved these problems by optimizing the decoder of the model. We also implemented saving model checkpoints at every epoch so we could break up training time over multiple sessions. Ultimately, we trained our model with soft attention for 10-20 epochs at least 5 times, one for each encoder plus dry runs.
+One of the primary challenges we faced during the re-implementation process was long training time. Training for just 10 epochs took nearly two hours on a Google Colab T4 GPU. To address this, we optimized the decoder code and added checkpoint saving to resume training across sessions. We ultimately trained soft attention models for 10–20 epochs across five encoder variants.
 
-On the note of long training times, another challenge that we faced was implementing and training both hard and soft attention. Based on hard attention's non-differentiability and lower training stability and thus greater time to converge, we decided to first pursue implementing soft attention and then hard attention. However, after we finished training for soft attention, we felt that it would be a bit too ambitious and time consuming to do the same for hard attention, so we decided to abandon the attempt.
+Another major challenge was the complexity of implementing hard attention. While we initially intended to implement both soft and hard attention, we decided to drop hard attention due to its reliance on reinforcement learning (REINFORCE), which increases training instability and resource demands. Given our time and hardware constraints, we prioritized soft attention as the more tractable and impactful component.
 
 \section{Reflections}
+Our re-implementation achieved meaningful results despite working with limited resources. Even though we trained on the smaller Flickr8k dataset and used frozen, pre-trained CNN encoders, the model was able to generate coherent captions and produce interpretable attention maps. This underscores the robustness and practicality of the soft attention mechanism, even in constrained settings.
 
-% Share lessons learned during the project.
-% Summarize the key takeaways from your re-implementation effort and the lessons learned.
-% Discuss potential future directions or extensions based on your findings and the paper’s implications.
+One key lesson that we learned was the importance of setting feasible goals given time constraints and limited resources. Although the original paper explored both hard and soft attention mechanisms, we found that soft attention was more practical to implement and train due to its differentiable and deterministic nature. We abandoned hard attention since it relies on sampling-based methods like REINFORCE to handle non-differentiable operations, resulting in high-variance gradients and unstable training, which were impractical under our time constraints.
 
-Our re-implementation demonstrated meaningful results given limited resources. Despite only training on the smaller Flickr8k dataset and using frozen pre-trained CNN encoders, our model generated reasonable captions and produced interpretable attention maps. This highlights the effectiveness of the soft attention mechanism, even under constraints.
-
-One of the key lessons we learned was the importance of feasibility given time constraints and tight resources. Although the original paper explored both hard and soft attention mechanisms, we found that soft attention was significantly more practical to implement and train due to its differentiable and deterministic nature. Implementing the hard attention, especially the required reinforcement learning techniques like REINFORCE, from scratch was more time consuming than anticipated.
-
-Overall, this project deepened our understanding of attention mechanisms in image captioning and provided practical experience in re-implementing a significant paper in computer vision and natural language processing. For potential future work and with more time and computational capacity, we would look into using larger datasets that the original paper used such as Flickr30k and MS COCO to improve generalization and caption quality. We can also try to implement hard attention mechanism using REINFORCE to explore sharper spatial focus. Finally, we can fine-tune CNN encoder during training to allow the model to learn image features more tailored to caption generation.
+Overall, this project deepened our understanding of attention mechanisms in image captioning and provided practical experience in re-implementing a significant paper in vision-language research. For future work, we would explore training on larger datasets such as Flickr30k or MS COCO to improve generalization and caption diversity. We also hope to implement hard attention to investigate whether its sharper spatial focus leads to measurable gains. Lastly, fine-tuning the CNN encoder during training could help the model extract features more aligned with the captioning task, potentially closing the performance gap with the original implementation.
 
 
 \section{References}
-
-% Include full citations for the original paper and any tools, datasets, or frameworks used.
 \noindent
 [1] Xu, K., Ba, J., Kiros, R., Cho, K., Courville, A., Salakhutdinov, R., Zemel, R., \& Bengio, Y. (2015). Show, Attend and Tell: Neural Image Caption Generation with Visual Attention. Paper Website. \\ https://kelvinxu.github.io/projects/capgen.html\\
 
 \noindent
-[2] Xu, K. Arctic Captions: Theano Implementation of Show, Attend and Tell. GitHub repository. https://github.com/kelvinxu/arctic-captions\\
+[2] Xu, K. Arctic Captions: Theano Implementation of Show, Attend and Tell. GitHub repository. \\ https://github.com/kelvinxu/arctic-captions\\
 
 \noindent
 [3] Wong, A.. Show, Attend and Tell: PyTorch Implementation. GitHub repository. \\ https://github.com/AaronCCWong/Show-Attend-and-Tell\\
